@@ -1,7 +1,7 @@
 /**
  * Service worker of the installable app (24_PWA §3 P4): keeps the app shell so the app opens without a connection.
  * Only this site's own files are cached; server calls and data are never cached.
- * scripts/build-app.js replaces dev-20261021164845 so each build replaces the previous cache.
+ * scripts/build-app.js replaces dev-20261022043404 so each build replaces the previous cache.
  */
 var CACHE = 'hr-shell-__VERSION__';
 var SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
