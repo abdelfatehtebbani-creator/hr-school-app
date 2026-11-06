@@ -58,6 +58,10 @@
     font: inherit; font-size: 13px; padding: 6px 10px; cursor: pointer; text-align: start; }
   .signout:hover { color: #fff; border-color: var(--gold); }
   #signin .gsi { margin-top: 12px; min-height: 44px; }
+  dialog.wide { width: min(920px, 96vw); }
+  .doc-head { display: flex; align-items: center; gap: 14px; }
+  .doc-photo img { width: 72px; height: 72px; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); }
+  tr.muted td { color: var(--muted, #8a8580); }
   .signin-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 18px; color: var(--primary); }
   .signin-brand img { width: 56px; height: 56px; object-fit: contain; }
   .content { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -204,6 +208,7 @@
           <button type="button" data-page="holidayWork" data-roles="HR EMPLOYEE ACADEMIC_MANAGER">العمل في العطل</button>
           <button type="button" data-page="attendance" data-roles="HR EMPLOYEE ACADEMIC_MANAGER">الحضور</button>
           <button type="button" data-page="deductions" data-roles="HR EMPLOYEE ACADEMIC_MANAGER">الخصومات</button>
+          <button type="button" data-page="advances" data-roles="HR EMPLOYEE ACADEMIC_MANAGER">السلف</button>
           <button type="button" data-page="reports" data-roles="HR ACADEMIC_MANAGER">التقارير</button>
           <button type="button" data-page="presence" data-roles="HR ACADEMIC_MANAGER">غياب اليوم</button>
           <button type="button" data-page="audit" data-roles="HR">سجل التدقيق</button>
@@ -231,6 +236,7 @@
       <section id="page-holidayWork" class="page" hidden></section>
       <section id="page-attendance" class="page" hidden></section>
       <section id="page-deductions" class="page" hidden></section>
+      <section id="page-advances" class="page" hidden></section>
       <section id="page-reports" class="page" hidden></section>
       <section id="page-presence" class="page" hidden></section>
       <section id="page-profile" class="page" hidden></section>
@@ -241,7 +247,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261022053403"};
+var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261106172244"};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -484,7 +490,7 @@ var AppTransport = (function () {
       var SESSION_ID = "";
       var SIGN_IN_ERROR = "";
       var GATEWAY_URL = "";
-      var I18N_EN = JSON.parse("{\"exact\":{\"نظام الموارد البشرية\":\"HR System\",\"اللوحة\":\"Dashboard\",\"الموظفون\":\"Employees\",\"الإجازات\":\"Leave\",\"ساعات الاستثناء\":\"Exception hours\",\"العمل في العطل\":\"Holiday work\",\"الحضور\":\"Attendance\",\"الخصومات\":\"Deductions\",\"التقارير\":\"Reports\",\"غياب اليوم\":\"Today's absence\",\"سجل التدقيق\":\"Audit log\",\"الإعدادات\":\"Settings\",\"ملفي\":\"My profile\",\"↻ تحديث\":\"↻ Refresh\",\"تحديث الصفحة\":\"Refresh page\",\"الدخول بحساب Google\":\"Sign in with Google\",\"تسجيل الدخول غير مهيأ بعد.\":\"Sign-in is not configured yet.\",\"جارٍ التحميل…\":\"Loading…\",\"الموارد البشرية\":\"HR\",\"موظف\":\"Employee\",\"مدير أكاديمي\":\"Academic manager\",\"الموظف\":\"Employee\",\"الرقم\":\"Code\",\"الرقم الوظيفي\":\"Employee code\",\"الاسم\":\"Name\",\"القسم\":\"Department\",\"التاريخ\":\"Date\",\"الحالة\":\"Status\",\"ملاحظات\":\"Notes\",\"السبب\":\"Reason\",\"التفاصيل\":\"Details\",\"إغلاق\":\"Close\",\"إلغاء\":\"Cancel\",\"حفظ\":\"Save\",\"إضافة\":\"Add\",\"تعديل\":\"Edit\",\"عرض\":\"Show\",\"مراجعة\":\"Review\",\"اعتماد\":\"Approve\",\"رفض\":\"Reject\",\"موافقة\":\"Approve\",\"السجل\":\"History\",\"النوع\":\"Type\",\"من\":\"From\",\"إلى\":\"To\",\"اليوم\":\"Day\",\"الشهر\":\"Month\",\"الأيام\":\"Days\",\"أيام\":\"Days\",\"المبلغ\":\"Amount\",\"المجموع\":\"Total\",\"الساعات\":\"Hours\",\"المدة\":\"Duration\",\"الوقت\":\"Time\",\"العنوان\":\"Subject\",\"الحدث\":\"Event\",\"النسخة\":\"Copy\",\"القرار\":\"Decision\",\"البداية\":\"Start\",\"النهاية\":\"End\",\"الملاحظة\":\"Note\",\"البريد\":\"Email\",\"العملة\":\"Currency\",\"الراتب\":\"Salary\",\"الدور\":\"Role\",\"الرصيد\":\"Balance\",\"— اختر —\":\"— Select —\",\"لا يوجد.\":\"None.\",\"التالي\":\"Next\",\"السابق\":\"Previous\",\"تصدير\":\"Export\",\"تنزيل Excel\":\"Download Excel\",\"إنشاء\":\"Create\",\"استعادة\":\"Restore\",\"تعطيل\":\"Deactivate\",\"تسوية\":\"Adjustment\",\"إعادة حساب\":\"Recalculation\",\"قفل\":\"Lock\",\"فك قفل\":\"Unlock\",\"تحديث\":\"Refresh\",\"التعليق\":\"Comment\",\"البيانات\":\"Details\",\"الملخص\":\"Summary\",\"الطلبات\":\"Requests\",\"بانتظار\":\"Waiting for\",\"نشط\":\"Active\",\"غير نشط\":\"Inactive\",\"موقوف\":\"Suspended\",\"منتهية خدمته\":\"Terminated\",\"مسودة\":\"Draft\",\"قيد الانتظار\":\"Pending\",\"بانتظار قرار HR\":\"Awaiting HR decision\",\"معتمدة\":\"Approved\",\"مرفوضة\":\"Rejected\",\"ملغاة\":\"Cancelled\",\"معتمد\":\"Approved\",\"محسوب\":\"Calculated\",\"معدَّل\":\"Adjusted\",\"معدَّل بعد إعادة الحساب\":\"Adjusted after recalculation\",\"معفى\":\"Waived\",\"مقفل\":\"Locked\",\"لم يُحسب\":\"Not calculated\",\"محسوب، بانتظار الاعتماد\":\"Calculated, awaiting approval\",\"محسوب، غير معتمد\":\"Calculated, not approved\",\"معتمد، غير مقفل\":\"Approved, not locked\",\"فعّال\":\"Active\",\"معطّل\":\"Inactive\",\"مرضية\":\"Sick\",\"عرضية\":\"Casual\",\"بدون راتب\":\"Unpaid\",\"أمومة\":\"Maternity\",\"إجازة بدون راتب\":\"Unpaid leave\",\"أمومة بدون راتب\":\"Unpaid maternity\",\"أمومة غير مدفوعة\":\"Unpaid maternity\",\"حاضر\":\"Present\",\"غائب\":\"Absent\",\"ناقص\":\"Incomplete\",\"بصمة ناقصة\":\"Incomplete punch\",\"يحتاج مراجعة\":\"Needs review\",\"إجازة\":\"Leave\",\"استثناء\":\"Exception\",\"عمل في عطلة\":\"Holiday work\",\"مُصحَّح\":\"Corrected\",\"مصحَّح\":\"Corrected\",\"استثناء معتمد\":\"Approved exception\",\"ساعات استثناء\":\"Exception hours\",\"تصحيح حضور\":\"Attendance correction\",\"غياب\":\"Absence\",\"تأخير\":\"Late\",\"حضور\":\"Present\",\"في إجازة\":\"On leave\",\"مبدئي\":\"Provisional\",\"مرخص\":\"Authorized\",\"أنثى\":\"Female\",\"ذكر\":\"Male\",\"الأحد\":\"Sunday\",\"الاثنين\":\"Monday\",\"الثلاثاء\":\"Tuesday\",\"الأربعاء\":\"Wednesday\",\"الخميس\":\"Thursday\",\"الجمعة\":\"Friday\",\"السبت\":\"Saturday\",\"يدوية\":\"Manual\",\"آلية\":\"Automatic\",\"تقديم الطلب\":\"Submitted\",\"توجيه إلى HR\":\"Routed to HR\",\"موافقة المدير الأكاديمي\":\"Academic manager approval\",\"رفض المدير الأكاديمي\":\"Academic manager rejection\",\"رأي المدير الأكاديمي\":\"Academic manager opinion\",\"اعتماد HR\":\"HR approval\",\"رفض HR\":\"HR rejection\",\"قرار HR\":\"HR decision\",\"موافقة المدير الأكاديمي ثم HR\":\"Academic manager approval, then HR\",\"رأي المدير الأكاديمي ثم قرار HR\":\"Academic manager opinion, then HR decision\",\"HR فقط\":\"HR only\",\"موافقة المدير ثم HR\":\"Manager approval, then HR\",\"رأي المدير ثم HR\":\"Manager opinion, then HR\",\"وافق\":\"Approved\",\"أبدى رأيه\":\"Gave an opinion\",\"اعتمد\":\"Approved\",\"ألغى\":\"Cancelled\",\"طلب جديد بانتظار المراجعة\":\"New request awaiting review\",\"طلب رأي المدير الأكاديمي\":\"Academic opinion requested\",\"طلب بانتظار قرار HR\":\"Request awaiting HR decision\",\"اعتماد الطلب\":\"Request approved\",\"رفض الطلب\":\"Request rejected\",\"إلغاء HR للطلب\":\"Request cancelled by HR\",\"من تاريخ\":\"From date\",\"إلى تاريخ\":\"To date\",\"الوظيفة (عربي)\":\"Job title (Arabic)\",\"الوظيفة (إنجليزي)\":\"Job title (English)\",\"جدول العمل\":\"Work schedule\",\"تاريخ السريان\":\"Effective from\",\"تاريخ انتهاء الخدمة\":\"End of service date\",\"الاسم (عربي)\":\"Name (Arabic)\",\"الاسم (إنجليزي)\":\"Name (English)\",\"مسار الموافقة\":\"Approval track\",\"الشهادة الطبية\":\"Medical certificate\",\"السنوات الأكاديمية\":\"Academic years\",\"الأيام المدفوعة\":\"Paid days\",\"وقت البداية\":\"Start time\",\"وقت النهاية\":\"End time\",\"الجنس\":\"Gender\",\"العنوان (عربي)\":\"Subject (Arabic)\",\"النص (عربي)\":\"Text (Arabic)\",\"العنوان (إنجليزي)\":\"Subject (English)\",\"النص (إنجليزي)\":\"Text (English)\",\"تاريخ التعيين\":\"Hire date\",\"المستوى الأكاديمي\":\"Academic level\",\"الوظيفة\":\"Job title\",\"نوع الإجازة\":\"Leave type\",\"السنة الأكاديمية\":\"Academic year\",\"رقم البصمة\":\"Fingerprint ID\",\"تحقق من البيانات\":\"Check the data\",\"تعارض مع بيانات موجودة\":\"Conflicts with existing data\",\"ليست لديك صلاحية لهذا الإجراء.\":\"You do not have permission to perform this action.\",\"السجل غير موجود.\":\"Record not found.\",\"النظام مشغول، حاول مرة أخرى.\":\"The system is busy, try again.\",\"انتهت الجلسة، سجّل الدخول من جديد.\":\"Your session ended. Please sign in again.\",\"حدث خطأ غير متوقع.\":\"An unexpected error occurred.\",\"لا يوجد اتصال بالإنترنت.\":\"No internet connection.\",\"تسجيل الخروج\":\"Sign out\",\"تسجيل الخروج من هذا الجهاز؟\":\"Sign out on this device?\",\"إعادة المحاولة\":\"Try again\",\"تثبيت التطبيق\":\"Install the app\",\"تفعيل الإشعارات\":\"Turn on notifications\",\"تم تفعيل الإشعارات على هذا الجهاز.\":\"Notifications are on for this device.\",\"تعذّر تفعيل الإشعارات على هذا الجهاز.\":\"Notifications could not be turned on for this device.\",\"للتثبيت على iPhone: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».\":\"To install on iPhone: tap Share, then \\\"Add to Home Screen\\\".\",\"لوحة الموارد البشرية\":\"HR dashboard\",\"هذا الأسبوع\":\"This week\",\"هذا الشهر\":\"This month\",\"فترة مخصصة\":\"Custom period\",\"موظف نشط\":\"Active employees\",\"مجموع الخصومات\":\"Total deductions\",\"بانتظار إجراء HR\":\"Waiting for HR\",\"إجازات\":\"Leave\",\"تصحيحات حضور\":\"Attendance corrections\",\"حضور ناقص (هذا الشهر)\":\"Incomplete attendance (this month)\",\"يحتاج مراجعة (هذا الشهر)\":\"Needs review (this month)\",\"عند المدير الأكاديمي\":\"With the academic manager\",\"تنبيهات\":\"Alerts\",\"لا توجد تنبيهات.\":\"No alerts.\",\"لم تصل أي بصمات من الجهاز بعد. تأكد من تشغيل البرنامج الوسيط في المدرسة.\":\"No punches have arrived from the device yet. Make sure the bridge agent is running at school.\",\"لا توجد سنة أكاديمية تشمل اليوم، فلا يمكن تقديم طلبات إجازة. أضفها من الإعدادات.\":\"No academic year covers today, so leave requests cannot be submitted. Add it in Settings.\",\"لا يوجد جدول دوام افتراضي، فلا يُحسب التأخير والغياب لمن ليس له جدول. حدده من الإعدادات.\":\"There is no default work schedule, so lateness and absence are not calculated for employees without one. Set it in Settings.\",\"بحث بالاسم أو الرقم أو البريد\":\"Search by name, code or email\",\"كل الحالات\":\"All statuses\",\"إضافة موظف\":\"Add employee\",\"لا يوجد موظفون مطابقون.\":\"No matching employees.\",\"الجدول الافتراضي\":\"Default schedule\",\"بلا مستوى\":\"No level\",\"تمت إضافة الموظف وحساب دخوله.\":\"Employee and sign-in account added.\",\"تم حفظ التعديلات.\":\"Changes saved.\",\"الراتب الجديد\":\"New salary\",\"تم تغيير الراتب وحفظ السجل السابق.\":\"Salary changed; the previous one is kept in history.\",\"الحالة الجديدة\":\"New status\",\"تم تغيير الحالة.\":\"Status changed.\",\"الدور الجديد\":\"New role\",\"تم تغيير الدور.\":\"Role changed.\",\"الاستحقاق\":\"Entitlement\",\"التسويات\":\"Adjustments\",\"المستخدم\":\"Used\",\"المعلّق\":\"Pending\",\"المتبقي\":\"Remaining\",\"لا توجد تسويات لهذه السنة.\":\"No adjustments this year.\",\"سجل التسويات\":\"Adjustment history\",\"تسوية جديدة\":\"New adjustment\",\"إضافة أيام\":\"Add days\",\"خصم أيام\":\"Deduct days\",\"عدد الأيام\":\"Number of days\",\"التسوية لا تُعدَّل ولا تُحذف. لتصحيح خطأ أضف تسوية معاكسة واذكر السبب.\":\"An adjustment cannot be edited or deleted. To fix a mistake, add an opposite adjustment and give the reason.\",\"حفظ التسوية\":\"Save adjustment\",\"تم حفظ التسوية.\":\"Adjustment saved.\",\"جارٍ تحميل الرصيد…\":\"Loading balance…\",\"رصيدي\":\"My balance\",\"طلب إجازة\":\"Request leave\",\"لم تُحدَّد سنة أكاديمية بعد. تواصل مع الموارد البشرية.\":\"No academic year is set yet. Contact HR.\",\"يوم معتمد هذه السنة (بلا رصيد)\":\"approved days this year (no balance)\",\"مستخدم\":\"Used\",\"متاح للطلب\":\"Available to request\",\"طلب نيابة عن موظف\":\"Request for an employee\",\"يحددها HR\":\"Set by HR\",\"السبب (اختياري)\":\"Reason (optional)\",\"طلب إجازة نيابة عن موظف\":\"Leave request for an employee\",\"حددي تاريخ البداية فقط. تحدد الموارد البشرية المدة والأيام المدفوعة عند الاعتماد.\":\"Choose the start date only. HR sets the duration and paid days on approval.\",\"مدفوعة / بدون راتب\":\"Paid / unpaid\",\"عرض الشهادة\":\"View certificate\",\"بانتظار إجرائك\":\"Waiting for you\",\"طلباتي\":\"My requests\",\"كل الطلبات\":\"All requests\",\"لا شيء بانتظارك.\":\"Nothing is waiting for you.\",\"لا توجد طلبات.\":\"No requests.\",\"رأي المدير\":\"Manager opinion\",\"مُقدَّم\":\"Given\",\"بانتظار الرأي\":\"Waiting for opinion\",\"إلغاء الطلب\":\"Cancel request\",\"إرسال الرأي\":\"Send opinion\",\"تم إرسال الرأي.\":\"Opinion sent.\",\"تم رفض الطلب.\":\"Request rejected.\",\"تم الاعتماد.\":\"Approved.\",\"تمت الموافقة وأُحيل الطلب إلى HR.\":\"Approved and sent to HR.\",\"تم إلغاء الطلب.\":\"Request cancelled.\",\"تم إرسال الطلب.\":\"Request sent.\",\"إرسال الطلب\":\"Send request\",\"ملاحظة أو سبب (إلزامي عند الرفض أو إبداء الرأي)\":\"Note or reason (required to reject or give an opinion)\",\"طلب ساعات استثناء\":\"Request exception hours\",\"من الساعة\":\"From time\",\"إلى الساعة\":\"To time\",\"يُطلب الاستثناء مسبقًا فقط، قبل وقت بدايته.\":\"Exception hours are requested in advance only, before they start.\",\"تكليف موظف\":\"Assign an employee\",\"طلب عمل في عطلة\":\"Request holiday work\",\"العمل في عطلة رسمية يحتاج موافقة مسبقة. البصمة في عطلة بلا موافقة تبقى \\\"يحتاج مراجعة\\\". لا يترتب عليه أجر إضافي تلقائي.\":\"Working on an official holiday needs prior approval. Punches on a holiday without approval stay \\\"Needs review\\\". It brings no automatic extra pay.\",\"العطلة\":\"Holiday\",\"تكليف من HR\":\"Assigned by HR\",\"لا توجد عطل رسمية قادمة. تُضاف العطل من الإعدادات.\":\"There are no upcoming official holidays. Holidays are added in Settings.\",\"سبب التكليف\":\"Reason for the assignment\",\"التكليف معتمد مباشرة، ويُبلَّغ الموظف.\":\"The assignment is approved at once and the employee is notified.\",\"يُطلب قبل يوم العطلة. يمر الطلب بمسار الموافقة نفسه للإجازات، ولا يُعتمد بعد مرور العطلة.\":\"Request it before the holiday. It follows the same approval track as leave and cannot be approved after the holiday.\",\"تكليف موظف بالعمل في عطلة\":\"Assign holiday work\",\"تكليف\":\"Assign\",\"تم التكليف.\":\"Assigned.\",\"ملاحظة أو سبب (إلزامي عند الرفض أو إبداء الرأي أو إلغاء المعتمد)\":\"Note or reason (required to reject, give an opinion or cancel an approved request)\",\"العمل في عطلة\":\"Holiday work\",\"طلبات تصحيح بانتظار قرارك\":\"Correction requests waiting for you\",\"طلبات التصحيح\":\"Correction requests\",\"إعادة المعالجة\":\"Reprocess\",\"حضور يوم\":\"Attendance for a day\",\"دخول\":\"In\",\"خروج\":\"Out\",\"لا توجد سجلات لهذا اليوم. تظهر السجلات بعد وصول البصمات ومعالجتها.\":\"No records for this day. Records appear once punches arrive and are processed.\",\"تصحيح\":\"Correct\",\"وقت الدخول الصحيح\":\"Correct check-in time\",\"وقت الخروج الصحيح\":\"Correct check-out time\",\"حفظ التصحيح\":\"Save correction\",\"تم التصحيح وإعادة معالجة اليوم.\":\"Corrected and the day reprocessed.\",\"تم إرسال طلب التصحيح إلى الموارد البشرية.\":\"Correction request sent to HR.\",\"المسجل\":\"Recorded\",\"المطلوب\":\"Requested\",\"سبب الرفض\":\"Rejection reason\",\"ملاحظة (اختيارية)\":\"Note (optional)\",\"تم الاعتماد وإعادة معالجة اليوم.\":\"Approved and the day reprocessed.\",\"تم الرفض.\":\"Rejected.\",\"أرقام بصمة غير مربوطة بموظف\":\"Fingerprint IDs not linked to an employee\",\"بصمات محفوظة لأرقام لا يملكها أي موظف. أدخل الرقم في ملف الموظف (\\\"رقم البصمة\\\") ثم أعد معالجة الأيام المعنية.\":\"Punches stored for IDs no employee has. Enter the ID in the employee's file (\\\"Fingerprint ID\\\"), then reprocess the days concerned.\",\"عدد البصمات\":\"Punches\",\"آخر بصمة\":\"Last punch\",\"كل موظفي المستوى (يوم واحد)\":\"All employees of the level (one day)\",\"حضور موظفي مستواي\":\"My level's attendance\",\"للاطلاع فقط. التصحيح والخصومات من صلاحيات الموارد البشرية.\":\"View only. Corrections and deductions are for HR.\",\"لا توجد سجلات.\":\"No records.\",\"حضوري\":\"My attendance\",\"لا توجد سجلات لهذا الشهر.\":\"No records this month.\",\"طلب تصحيح\":\"Request correction\",\"لم يسجلوا حضورًا اليوم (\":\"Not checked in today (\",\"للعلم بالحضور فقط، وليست قرار غياب.\":\"For awareness only; this is not an absence decision.\",\"خصوماتي\":\"My deductions\",\"لا توجد خصومات لهذا الشهر. اضغط \\\"احسب\\\".\":\"No deductions this month. Press \\\"Calculate\\\".\",\"لا توجد خصومات لهذا الشهر.\":\"No deductions this month.\",\"احسب\":\"Calculate\",\"أعد الحساب\":\"Recalculate\",\"اعتمد الشهر\":\"Approve month\",\"تم اعتماد خصومات الشهر.\":\"Month deductions approved.\",\"اقفل الشهر\":\"Lock month\",\"تم قفل الشهر.\":\"Month locked.\",\"بعد القفل لا يمكن إعادة الحساب ولا التعديل على هذا الشهر. متابعة؟\":\"After locking, this month cannot be recalculated or edited. Continue?\",\"المجموع لكل موظف\":\"Total per employee\",\"قيمة اليوم\":\"Day rate\",\"إعفاء\":\"Waive\",\"سبب الإعفاء\":\"Reason for waiving\",\"تم الإعفاء.\":\"Waived.\",\"للقراءة فقط. يسجّل كل عملية حساسة ومن نفّذها ومتى.\":\"Read only. Records every sensitive action, who did it and when.\",\"المنفذ\":\"Actor\",\"العملية\":\"Action\",\"نوع السجل\":\"Record type\",\"رقم السجل\":\"Record ID\",\"النتيجة\":\"Result\",\"كل المستخدمين\":\"All users\",\"كل العمليات\":\"All actions\",\"كل الأنواع\":\"All types\",\"كل النتائج\":\"All results\",\"نجحت\":\"Succeeded\",\"فشلت\":\"Failed\",\"مسح الفلاتر\":\"Clear filters\",\"تم التنزيل، وسُجّل التصدير في السجل.\":\"Downloaded; the export is recorded in the log.\",\"لا توجد سجلات مطابقة.\":\"No matching records.\",\"القيمة القديمة\":\"Old value\",\"القيمة الجديدة\":\"New value\",\"تقرير الخصومات الشهرية\":\"Monthly deductions report\",\"تقرير الحضور\":\"Attendance report\",\"تقرير الإجازات\":\"Leave report\",\"تقرير أرصدة الإجازات\":\"Leave balances report\",\"تقرير الغياب والتأخير\":\"Absence and late report\",\"تقرير ساعات الاستثناء\":\"Exception hours report\",\"تقرير الموافقات\":\"Approvals report\",\"التقرير الشامل لموظف\":\"Employee HR report\",\"التقرير\":\"Report\",\"مسودة: الشهر غير مقفل، والأرقام قد تتغير. اقفل الشهر من صفحة الخصومات قبل إرسال التقرير للمحاسب.\":\"Draft: the month is not locked and the figures may change. Lock the month on the Deductions page before sending the report to the accountant.\",\"مجموع الأيام\":\"Total days\",\"كل الأقسام\":\"All departments\",\"كل الموظفين\":\"All employees\",\"لا توجد سجلات حضور في هذه الفترة.\":\"No attendance records in this period.\",\"تأخير (مرات / دقائق)\":\"Late (times / minutes)\",\"خروج مبكر (مرات / دقائق)\":\"Early leave (times / minutes)\",\"التفاصيل اليومية\":\"Daily details\",\"الدخول\":\"Check-in\",\"الخروج\":\"Check-out\",\"التأخير\":\"Late\",\"الخروج المبكر\":\"Early leave\",\"لا توجد طلبات إجازة في هذه الفترة.\":\"No leave requests in this period.\",\"الأيام المعتمدة داخل الفترة لكل نوع.\":\"Approved days inside the period, per type.\",\"معلّقة\":\"Pending\",\"مدفوعة\":\"Paid\",\"غير مدفوعة\":\"Unpaid\",\"تاريخ التقديم\":\"Submitted on\",\"لا يوجد غياب ولا تأخير في هذه الفترة.\":\"No absence or lateness in this period.\",\"أيام الغياب\":\"Absence days\",\"مرات التأخير\":\"Times late\",\"دقائق التأخير\":\"Late minutes\",\"أيام الخصم\":\"Deducted days\",\"أيام الخصم من أسطر الخصومات المحسوبة (المعفاة لا تُحتسب). الغياب المغطى بإجازة لا يظهر هنا.\":\"Deducted days come from calculated deduction lines (waived ones are not counted). Absence covered by leave does not appear here.\",\"الخصم\":\"Deduction\",\"لا توجد طلبات استثناء في هذه الفترة.\":\"No exception requests in this period.\",\"المعتمدة\":\"Approved\",\"الساعات المعتمدة\":\"Approved hours\",\"كل المسارات\":\"All tracks\",\"الطلبات المقدَّمة في الفترة المختارة.\":\"Requests submitted in the chosen period.\",\"لا توجد طلبات في هذه الفترة.\":\"No requests in this period.\",\"مفتوحة\":\"Open\",\"متوسط أيام القرار\":\"Average days to decision\",\"متأخر\":\"Overdue\",\"التقديم\":\"Submitted\",\"المسار\":\"Track\",\"المدير الأكاديمي\":\"Academic manager\",\"القرار النهائي\":\"Final decision\",\"اختر موظفًا لعرض تقريره الشامل.\":\"Choose an employee to see their HR report.\",\"الغياب\":\"Absence\",\"التأخير (مرات / دقائق)\":\"Late (times / minutes)\",\"الخروج المبكر (مرات / دقائق)\":\"Early leave (times / minutes)\",\"ساعات استثناء معتمدة\":\"Approved exception hours\",\"مبلغ الخصم\":\"Deduction amount\",\"الإجازات المعتمدة داخل الفترة\":\"Approved leave inside the period\",\"طلبات معلّقة\":\"Pending requests\",\"الحضور اليومي\":\"Daily attendance\",\"لا توجد خصومات.\":\"No deductions.\",\"لا يوجد موظفون ضمن هذا الاختيار.\":\"No employees in this selection.\",\"المتبقي = الاستحقاق + التسويات − المعتمد. ملف Excel/PDF يعرض كل الأعمدة لكل نوع.\":\"Remaining = entitlement + adjustments − approved. The Excel/PDF file shows every column for each type.\",\"أيام السجلات\":\"Record days\",\"مرات الخروج المبكر\":\"Times left early\",\"دقائق الخروج المبكر\":\"Early-leave minutes\",\"التأخير (دقيقة)\":\"Late (minutes)\",\"الخروج المبكر (دقيقة)\":\"Early leave (minutes)\",\"الأيام المعتمدة داخل الفترة\":\"Approved days inside the period\",\"عدد الطلبات\":\"Requests\",\"أيام بدون راتب معتمدة\":\"Approved unpaid days\",\"الخصم (أيام — الحالة)\":\"Deduction (days — status)\",\"أيام حتى القرار\":\"Days to decision\",\"الغياب والتأخير\":\"Absence and lateness\",\"الإجازات المعتمدة داخل الفترة (أيام)\":\"Approved leave inside the period (days)\",\"الاستثناءات\":\"Exceptions\",\"أيام التأخير\":\"Late days\",\"أيام بدون راتب\":\"Unpaid days\",\"افتراضي\":\"default\",\"جداول الدوام\":\"Work schedules\",\"أيام العمل\":\"Working days\",\"الموظف الذي لم يُحدَّد له جدول يتبع الجدول الافتراضي.\":\"Employees without a schedule follow the default schedule.\",\"لا توجد جداول بعد.\":\"No schedules yet.\",\"أصبح الجدول الافتراضي.\":\"It is now the default schedule.\",\"اجعله افتراضيًا\":\"Make default\",\"يوم عمل\":\"Working day\",\"إضافة جدول دوام\":\"Add work schedule\",\"تم حفظ الجدول.\":\"Schedule saved.\",\"العطل الرسمية\":\"Official holidays\",\"العطلة تشمل كل الموظفين، ولا تغيّر حساب مدة الإجازات.\":\"A holiday applies to all employees and does not change how leave duration is counted.\",\"لا توجد عطل بعد.\":\"No holidays yet.\",\"إضافة عطلة رسمية\":\"Add official holiday\",\"تم حفظ العطلة.\":\"Holiday saved.\",\"النسخ الاحتياطي\":\"Backups\",\"نسخة احتياطية يدوية الآن\":\"Manual backup now\",\"سبب النسخة (مثل: قبل تعديل كبير)\":\"Reason for the copy (e.g. before a big change)\",\"إنشاء النسخة\":\"Create backup\",\"نسخة يدوية الآن\":\"Manual backup now\",\"الاسترجاع يتم يدويًا من مالك النظام (21 §9 B7).\":\"Restoring is done manually by the system owner (21 §9 B7).\",\"لا توجد نسخ بعد.\":\"No backups yet.\",\"إشعارات البريد\":\"Email notifications\",\"إرسال البريد مفعّل\":\"Email sending enabled\",\"تم تفعيل إرسال البريد.\":\"Email sending enabled.\",\"تم إيقاف إرسال البريد. تُحفظ الإشعارات دون إرسال.\":\"Email sending stopped. Notifications are stored without sending.\",\"تم حفظ القالب.\":\"Template saved.\",\"لم تُحدَّد أي سنة أكاديمية. لا تُقبل طلبات إجازة قبل إضافتها.\":\"No academic year is set. Leave requests are refused until one is added.\",\"إضافة سنة أكاديمية\":\"Add academic year\",\"الأيام خارج السنوات المحددة لا تقبل طلبات إجازة، ورصيد الإجازات يتجدد مع كل سنة.\":\"Days outside the defined years do not accept leave requests, and leave balances renew every year.\",\"تم الحفظ.\":\"Saved.\",\"الأقسام\":\"Departments\",\"لا توجد أقسام بعد.\":\"No departments yet.\",\"إضافة قسم\":\"Add department\",\"تم الحفظ. مسار الموافقة الجديد يسري على الطلبات الجديدة فقط.\":\"Saved. The new approval track applies to new requests only.\",\"المستويات الأكاديمية\":\"Academic levels\",\"لا توجد مستويات بعد.\":\"No levels yet.\",\"بلا مدير\":\"No manager\",\"إضافة مستوى\":\"Add level\",\"لتصحيح أي بيانات تواصل مع الموارد البشرية.\":\"To correct any details, contact HR.\",\"استيراد من Excel\":\"Import from Excel\",\"استيراد موظفين من Excel\":\"Import employees from Excel\",\"تحقق\":\"Check\",\"استيراد\":\"Import\",\"نسخ عناوين الأعمدة\":\"Copy column titles\",\"الصق هنا الأسطر المنسوخة من Excel\":\"Paste the rows copied from Excel here\",\"نُسخت العناوين. الصقها في أول سطر من ملف Excel.\":\"Titles copied. Paste them in the first row of the Excel file.\",\"رتّب الأعمدة في Excel بهذا الترتيب، ثم انسخ الأسطر والصقها هنا. سطر العناوين اختياري.\":\"Order the Excel columns like this, then copy the rows and paste them here. The title row is optional.\",\"الجنس: ذكر أو أنثى. التاريخ: 2026-09-01 أو 01/09/2026 (يوم/شهر/سنة).\":\"Gender: ذكر or أنثى (Male/Female). Date: 2026-09-01 or 01/09/2026 (day/month/year).\",\"القسم والمستوى وجدول العمل: بالاسم العربي أو الإنجليزي كما في الإعدادات. المستوى والجدول والبصمة اختيارية.\":\"Department, level and work schedule: by their Arabic or English name as in Settings. Level, schedule and fingerprint are optional.\",\"لا يُستورد شيء ما دام في سطر خطأ. لكل موظف يُنشأ حساب دخول بدور موظف.\":\"Nothing is imported while any row has an error. Each employee gets a sign-in account with the Employee role.\",\"السطر\":\"Row\",\"سليم\":\"OK\",\"مكرر في السطر\":\"Repeated in row\",\"صحّح الأخطاء قبل الاستيراد.\":\"Fix the errors before importing.\",\"لا توجد أسطر للاستيراد.\":\"There are no rows to import.\",\"استورد 150 موظفًا على الأكثر في المرة الواحدة.\":\"Import at most 150 employees at a time.\",\"القائمة\":\"Menu\",\"الملف جاهز\":\"The file is ready\",\"تنزيل الملف\":\"Download file\",\"المدرسة\":\"School\",\"اسم المدرسة (عربي)\":\"School name (Arabic)\",\"اسم المدرسة (إنجليزي)\":\"School name (English)\",\"الشعار\":\"Logo\",\"لا يوجد شعار.\":\"No logo.\",\"تغيير الشعار\":\"Change logo\",\"إزالة الشعار\":\"Remove logo\",\"حفظ الاسم\":\"Save name\",\"تم حفظ اسم المدرسة.\":\"School name saved.\",\"تم حفظ الشعار.\":\"Logo saved.\",\"تمت إزالة الشعار.\":\"Logo removed.\",\"الشعار (PNG أو JPG حتى 500KB)\":\"Logo (PNG or JPG up to 500KB)\",\"يظهران في الشريط العلوي وصفحة الدخول. إن تُرك الاسم الإنجليزي فارغًا يظهر العربي في الواجهة الإنجليزية.\":\"Shown in the top bar and the sign-in page. If the English name is empty, the Arabic one is shown in English mode.\",\"كل رسالة تحمل العربية ثم الإنجليزية. المتغيرات المتاحة: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}\":\"Every message carries Arabic, then English. Available variables: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}\"},\"patterns\":[[\"^تأخير (\\\\d+) د$\",\"Late $1 min\"],[\"^خروج مبكر (\\\\d+) د$\",\"Early leave $1 min\"],[\"^(\\\\d+) د$\",\"$1 min\"],[\"^تمت المعالجة: (\\\\d+) سجل تغيّر\\\\.$\",\"Processed: $1 record(s) changed.\"],[\"^تصحيح حضور: (.+)$\",\"Attendance correction: $1\"],[\"^طلب تصحيح حضور (.+)$\",\"Attendance correction request $1\"],[\"^(اعتماد|رفض) تصحيح: (.+)$\",\"$1 correction: $2\"],[\"^المسجل الآن: دخول (.*)، خروج (.*)\\\\. اترك الحقل فارغًا إن لم يتغير\\\\.$\",\"Currently recorded: in $1, out $2. Leave a field empty if it did not change.\"],[\"^المسجل: (.*)، المطلوب: (.*)\\\\. السبب: (.*)$\",\"Recorded: $1, requested: $2. Reason: $3\"],[\"^سبب الرفض: (.*)$\",\"Rejection reason: $1\"],[\"^(\\\\S+)–(\\\\S+) من (\\\\d+)$\",\"$1–$2 of $3\"],[\"^(\\\\d+) رقم بصمة غير مربوط بموظف\\\\. أدخل رقم البصمة في ملفات الموظفين\\\\.$\",\"$1 fingerprint ID(s) not linked to an employee. Enter the fingerprint ID in the employee files.\"],[\"^آخر مزامنة للبصمة كانت (.+)\\\\. تأكد أن البرنامج الوسيط يعمل\\\\.$\",\"The last fingerprint sync was $1. Make sure the bridge agent is running.\"],[\"^(\\\\d+) طلب ينتظر قرار HR منذ أكثر من (\\\\d+) أيام\\\\.$\",\"$1 request(s) have waited for HR for more than $2 days.\"],[\"^(.*) · آخر تحديث (.*)$\",\"$1 · last updated $2\"],[\"^المجموع: (.*) \\\\((.*) يوم\\\\)$\",\"Total: $1 ($2 days)\"],[\"^المجموع: (.*)$\",\"Total: $1\"],[\"^حالة الشهر: ?(.*)$\",\"Month status: $1\"],[\"^(\\\\d+) سجل حضور ناقص يحتاج تصحيحًا قبل الاعتماد$\",\"$1 incomplete attendance record(s) to correct before approval\"],[\"^(\\\\d+) سجل يحتاج مراجعة \\\\(لا يُخصم\\\\)$\",\"$1 record(s) need review (not deducted)\"],[\"^تم الحساب: (\\\\d+) جديد، (\\\\d+) معدَّل، (\\\\d+) ملغى\\\\. تنبيه: (.*)\\\\.$\",\"Calculated: $1 new, $2 adjusted, $3 voided. Warning: $4.\"],[\"^تم الحساب: (\\\\d+) جديد، (\\\\d+) معدَّل، (\\\\d+) ملغى\\\\.$\",\"Calculated: $1 new, $2 adjusted, $3 voided.\"],[\"^إعفاء من خصم: (.+)$\",\"Waive deduction: $1\"],[\"^(غياب|تأخير|إجازة بدون راتب|أمومة بدون راتب)، (.*) يوم، (.*)$\",\"$1, $2 days, $3\"],[\"^(.*) \\\\(User ID في الجهاز\\\\)$\",\"$1 (User ID on the device)\"],[\"^تعديل: (.+)$\",\"Edit: $1\"],[\"^تغيير الراتب: (.+)$\",\"Change salary: $1\"],[\"^(.*) \\\\(الحالي (.*)\\\\)$\",\"$1 (current $2)\"],[\"^تغيير الحالة: (.+)$\",\"Change status: $1\"],[\"^(.*) \\\\(لمنتهي الخدمة فقط\\\\)$\",\"$1 (for terminated employees only)\"],[\"^تغيير الدور: (.+)$\",\"Change role: $1\"],[\"^رصيد الإجازات: (.+)$\",\"Leave balance: $1\"],[\"^عدد الساعات: (.+)$\",\"Hours: $1\"],[\"^العطل القادمة: (.+)$\",\"Upcoming holidays: $1\"],[\"^(.*) \\\\(تكليف من HR\\\\)$\",\"$1 (assigned by HR)\"],[\"^متبقٍ من (\\\\S+)$\",\"remaining of $1\"],[\"^ ?\\\\((\\\\S+) بدون راتب\\\\)$\",\" ($1 unpaid)\"],[\"^(.*) \\\\(PDF أو JPG أو PNG حتى 5MB\\\\)$\",\"$1 (PDF, JPG or PNG up to 5MB)\"],[\"^المدة: (\\\\d+) يوم \\\\(أيام تقويمية شاملة\\\\)\\\\.(.*)$\",\"Duration: $1 days (calendar days, inclusive).$2\"],[\"^المتاح لك في (\\\\S+): (\\\\S+) يوم\\\\.(.*)$\",\"Available to you in $1: $2 days.$3\"],[\"^المدة أكبر من المتاح؛ لما يزيد اطلب إجازة بدون راتب\\\\.$\",\"The duration is more than available; request unpaid leave for the rest.\"],[\"^الإجازة بدون راتب لا تُخصم من رصيد، وتُحسب أيامها كلها غير مدفوعة\\\\.$\",\"Unpaid leave does not use a balance; all its days are unpaid.\"],[\"^طلب إجازة (.+)$\",\"Leave request: $1\"],[\"^(.*) \\\\(عند الاعتماد\\\\)$\",\"$1 (on approval)\"],[\"^(.*) \\\\(والباقي بدون راتب\\\\)$\",\"$1 (the rest unpaid)\"],[\"^تنزيل (.+)$\",\"Download $1\"],[\"^تم إنشاء (.+)، وحُفظت نسخة منه في مجلد التقارير في Drive\\\\.$\",\"$1 created; a copy is kept in the reports folder in Drive.\"],[\"^(\\\\d+) سطر خصم في التفاصيل \\\\(تظهر كاملة في ملف Excel/PDF\\\\)\\\\.$\",\"$1 deduction line(s) in the details (all shown in the Excel/PDF file).\"],[\"^(\\\\d+) سجل يومي\\\\. اختر موظفًا لعرض تفاصيله هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 daily record(s). Choose an employee to see the details here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) طلب\\\\. اختر موظفًا لعرض طلباته هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 request(s). Choose an employee to see their requests here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) سطر\\\\. اختر موظفًا لعرض تفاصيله هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 line(s). Choose an employee to see the details here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) طلبًا\\\\. ضيّق الفلاتر لعرضها هنا، أو نزّل ملف Excel/PDF\\\\.$\",\"$1 requests. Narrow the filters to show them here, or download the Excel/PDF file.\"],[\"^(\\\\S+) يوم — (.+)$\",\"$1 days — $2\"],[\"^الطلبات المقدَّمة في الفترة المختارة\\\\. تظهر طلبات موظفي مستواك التي تشارك فيها فقط\\\\.$\",\"Requests submitted in the chosen period. Only your level's requests that you take part in are shown.\"],[\"^مفتوحة أكثر من (\\\\d+) أيام$\",\"Open more than $1 days\"],[\"^بانتظار (.+)$\",\"Waiting for $1\"],[\"^الرصيد (\\\\S+)$\",\"Balance $1\"],[\"^(\\\\S+) من (\\\\S+) \\\\(معلّق (\\\\S+)\\\\)$\",\"$1 of $2 (pending $3)\"],[\"^(\\\\d+) من (\\\\d+)$\",\"$1 of $2\"],[\"^(.+): المتبقي$\",\"$1: remaining\"],[\"^تعديل جدول: (.+)$\",\"Edit schedule: $1\"],[\"^تعديل عطلة: (.+)$\",\"Edit holiday: $1\"],[\"^نسخة آلية كل يوم الساعة 02:00، ويُحتفظ بآخر 30 نسخة آلية \\\\(الأقدم يُنقل إلى سلة Drive\\\\)\\\\. النسخ اليدوية لا تُحذف\\\\. ?(.*)$\",\"An automatic copy is made every day at 02:00, and the last 30 are kept (older ones go to the Drive trash). Manual copies are never deleted. $1\"],[\"^قالب: (.+)$\",\"Template: $1\"],[\"^تعديل سنة: (.+)$\",\"Edit year: $1\"],[\"^(.*) \\\\(مثل 2026-2027\\\\)$\",\"$1 (e.g. 2026-2027)\"],[\"^تعديل قسم: (.+)$\",\"Edit department: $1\"],[\"^تعديل مستوى: (.+)$\",\"Edit level: $1\"],[\"^(.*) \\\\(من له دور مدير أكاديمي\\\\)$\",\"$1 (users with the academic manager role)\"],[\"^لم يسجلوا حضورًا اليوم \\\\((.*)\\\\)$\",\"Not checked in today ($1)\"],[\"^تقرير الحضور من (\\\\S+) إلى (\\\\S+)$\",\"Attendance report from $1 to $2\"],[\"^تقرير الإجازات من (\\\\S+) إلى (\\\\S+)$\",\"Leave report from $1 to $2\"],[\"^تقرير أرصدة الإجازات للسنة الأكاديمية (\\\\S+)$\",\"Leave balances report, academic year $1\"],[\"^تقرير الغياب والتأخير من (\\\\S+) إلى (\\\\S+)$\",\"Absence and late report from $1 to $2\"],[\"^تقرير ساعات الاستثناء من (\\\\S+) إلى (\\\\S+)$\",\"Exception hours report from $1 to $2\"],[\"^تقرير الموافقات: طلبات مقدَّمة من (\\\\S+) إلى (\\\\S+)$\",\"Approvals report: requests submitted from $1 to $2\"],[\"^التقرير الشامل للموظف من (\\\\S+) إلى (\\\\S+)$\",\"Employee HR report from $1 to $2\"],[\"^تقرير الخصومات الشهرية (\\\\S+)$\",\"Monthly deductions report $1\"],[\"^الرصيد في السنة الأكاديمية (\\\\S+)$\",\"Balance in academic year $1\"],[\"^الحالة: (.+) — مسودة: الشهر غير مقفل، والأرقام قد تتغير$\",\"Status: $1 — Draft: the month is not locked and the figures may change\"],[\"^الحالة: (.+)$\",\"Status: $1\"],[\"^أُنشئ: (.+) بواسطة (.+)$\",\"Created: $1 by $2\"],[\"^القسم: (.+)$\",\"Department: $1\"],[\"^الموظف: (.+)$\",\"Employee: $1\"],[\"^النوع: (.+)$\",\"Type: $1\"],[\"^المسار: (.+)$\",\"Track: $1\"],[\"^(اعتمد|رفض|وافق|أبدى رأيه|ألغى): (.+)$\",\"$1: $2\"],[\"^(\\\\S+) — (محسوب|معتمد|معدَّل|مقفل|معفى)$\",\"$1 — $2\"],[\"^(الأحد|الاثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت) (.+)$\",\"$1 $2\"],[\"^(مرضية|عرضية|بدون راتب|أمومة) (\\\\d{4}-\\\\d{2}-\\\\d{2}.*)$\",\"$1 $2\"],[\"^(\\\\d+) من (\\\\d+) سليم\\\\.$\",\"$1 of $2 OK.\"],[\"^استيراد (\\\\d+) موظف$\",\"Import $1 employee(s)\"],[\"^تم استيراد (\\\\d+) موظف مع حسابات دخولهم\\\\.$\",\"$1 employee(s) imported with their sign-in accounts.\"],[\"^مكرر في السطر (\\\\d+)\\\\.$\",\"Repeated in row $1.\"],[\"^(.+) · (.+) · (\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2})$\",\"$1 · $2 · $3\"]]}");
+      var I18N_EN = JSON.parse("{\"exact\":{\"نظام الموارد البشرية\":\"HR System\",\"اللوحة\":\"Dashboard\",\"الموظفون\":\"Employees\",\"الإجازات\":\"Leave\",\"ساعات الاستثناء\":\"Exception hours\",\"العمل في العطل\":\"Holiday work\",\"الحضور\":\"Attendance\",\"الخصومات\":\"Deductions\",\"التقارير\":\"Reports\",\"غياب اليوم\":\"Today's absence\",\"سجل التدقيق\":\"Audit log\",\"الإعدادات\":\"Settings\",\"ملفي\":\"My profile\",\"↻ تحديث\":\"↻ Refresh\",\"تحديث الصفحة\":\"Refresh page\",\"الدخول بحساب Google\":\"Sign in with Google\",\"تسجيل الدخول غير مهيأ بعد.\":\"Sign-in is not configured yet.\",\"جارٍ التحميل…\":\"Loading…\",\"الموارد البشرية\":\"HR\",\"موظف\":\"Employee\",\"مدير أكاديمي\":\"Academic manager\",\"الموظف\":\"Employee\",\"الرقم\":\"Code\",\"الرقم الوظيفي\":\"Employee code\",\"الاسم\":\"Name\",\"القسم\":\"Department\",\"التاريخ\":\"Date\",\"الحالة\":\"Status\",\"ملاحظات\":\"Notes\",\"السبب\":\"Reason\",\"التفاصيل\":\"Details\",\"إغلاق\":\"Close\",\"إلغاء\":\"Cancel\",\"حفظ\":\"Save\",\"إضافة\":\"Add\",\"تعديل\":\"Edit\",\"عرض\":\"Show\",\"مراجعة\":\"Review\",\"اعتماد\":\"Approve\",\"رفض\":\"Reject\",\"موافقة\":\"Approve\",\"السجل\":\"History\",\"النوع\":\"Type\",\"من\":\"From\",\"إلى\":\"To\",\"اليوم\":\"Day\",\"الشهر\":\"Month\",\"الأيام\":\"Days\",\"أيام\":\"Days\",\"المبلغ\":\"Amount\",\"المجموع\":\"Total\",\"الساعات\":\"Hours\",\"المدة\":\"Duration\",\"الوقت\":\"Time\",\"العنوان\":\"Subject\",\"الحدث\":\"Event\",\"النسخة\":\"Copy\",\"القرار\":\"Decision\",\"البداية\":\"Start\",\"النهاية\":\"End\",\"الملاحظة\":\"Note\",\"البريد\":\"Email\",\"العملة\":\"Currency\",\"الراتب\":\"Salary\",\"الدور\":\"Role\",\"الرصيد\":\"Balance\",\"— اختر —\":\"— Select —\",\"لا يوجد.\":\"None.\",\"التالي\":\"Next\",\"السابق\":\"Previous\",\"تصدير\":\"Export\",\"تنزيل Excel\":\"Download Excel\",\"إنشاء\":\"Create\",\"استعادة\":\"Restore\",\"تعطيل\":\"Deactivate\",\"تسوية\":\"Adjustment\",\"إعادة حساب\":\"Recalculation\",\"قفل\":\"Lock\",\"فك قفل\":\"Unlock\",\"تحديث\":\"Refresh\",\"التعليق\":\"Comment\",\"البيانات\":\"Details\",\"الملخص\":\"Summary\",\"الطلبات\":\"Requests\",\"بانتظار\":\"Waiting for\",\"نشط\":\"Active\",\"غير نشط\":\"Inactive\",\"موقوف\":\"Suspended\",\"منتهية خدمته\":\"Terminated\",\"مسودة\":\"Draft\",\"قيد الانتظار\":\"Pending\",\"بانتظار قرار HR\":\"Awaiting HR decision\",\"معتمدة\":\"Approved\",\"مرفوضة\":\"Rejected\",\"ملغاة\":\"Cancelled\",\"معتمد\":\"Approved\",\"محسوب\":\"Calculated\",\"معدَّل\":\"Adjusted\",\"معدَّل بعد إعادة الحساب\":\"Adjusted after recalculation\",\"معفى\":\"Waived\",\"مقفل\":\"Locked\",\"لم يُحسب\":\"Not calculated\",\"محسوب، بانتظار الاعتماد\":\"Calculated, awaiting approval\",\"محسوب، غير معتمد\":\"Calculated, not approved\",\"معتمد، غير مقفل\":\"Approved, not locked\",\"فعّال\":\"Active\",\"معطّل\":\"Inactive\",\"مرضية\":\"Sick\",\"عرضية\":\"Casual\",\"بدون راتب\":\"Unpaid\",\"أمومة\":\"Maternity\",\"إجازة بدون راتب\":\"Unpaid leave\",\"أمومة بدون راتب\":\"Unpaid maternity\",\"أمومة غير مدفوعة\":\"Unpaid maternity\",\"حاضر\":\"Present\",\"غائب\":\"Absent\",\"ناقص\":\"Incomplete\",\"بصمة ناقصة\":\"Incomplete punch\",\"يحتاج مراجعة\":\"Needs review\",\"إجازة\":\"Leave\",\"استثناء\":\"Exception\",\"عمل في عطلة\":\"Holiday work\",\"مُصحَّح\":\"Corrected\",\"مصحَّح\":\"Corrected\",\"استثناء معتمد\":\"Approved exception\",\"ساعات استثناء\":\"Exception hours\",\"تصحيح حضور\":\"Attendance correction\",\"غياب\":\"Absence\",\"تأخير\":\"Late\",\"حضور\":\"Present\",\"في إجازة\":\"On leave\",\"مبدئي\":\"Provisional\",\"مرخص\":\"Authorized\",\"أنثى\":\"Female\",\"ذكر\":\"Male\",\"الأحد\":\"Sunday\",\"الاثنين\":\"Monday\",\"الثلاثاء\":\"Tuesday\",\"الأربعاء\":\"Wednesday\",\"الخميس\":\"Thursday\",\"الجمعة\":\"Friday\",\"السبت\":\"Saturday\",\"يدوية\":\"Manual\",\"آلية\":\"Automatic\",\"تقديم الطلب\":\"Submitted\",\"توجيه إلى HR\":\"Routed to HR\",\"موافقة المدير الأكاديمي\":\"Academic manager approval\",\"رفض المدير الأكاديمي\":\"Academic manager rejection\",\"رأي المدير الأكاديمي\":\"Academic manager opinion\",\"اعتماد HR\":\"HR approval\",\"رفض HR\":\"HR rejection\",\"قرار HR\":\"HR decision\",\"موافقة المدير الأكاديمي ثم HR\":\"Academic manager approval, then HR\",\"رأي المدير الأكاديمي ثم قرار HR\":\"Academic manager opinion, then HR decision\",\"HR فقط\":\"HR only\",\"موافقة المدير ثم HR\":\"Manager approval, then HR\",\"رأي المدير ثم HR\":\"Manager opinion, then HR\",\"وافق\":\"Approved\",\"أبدى رأيه\":\"Gave an opinion\",\"اعتمد\":\"Approved\",\"ألغى\":\"Cancelled\",\"طلب جديد بانتظار المراجعة\":\"New request awaiting review\",\"طلب رأي المدير الأكاديمي\":\"Academic opinion requested\",\"طلب بانتظار قرار HR\":\"Request awaiting HR decision\",\"اعتماد الطلب\":\"Request approved\",\"رفض الطلب\":\"Request rejected\",\"إلغاء HR للطلب\":\"Request cancelled by HR\",\"من تاريخ\":\"From date\",\"إلى تاريخ\":\"To date\",\"الوظيفة (عربي)\":\"Job title (Arabic)\",\"الوظيفة (إنجليزي)\":\"Job title (English)\",\"جدول العمل\":\"Work schedule\",\"تاريخ السريان\":\"Effective from\",\"تاريخ انتهاء الخدمة\":\"End of service date\",\"الاسم (عربي)\":\"Name (Arabic)\",\"الاسم (إنجليزي)\":\"Name (English)\",\"مسار الموافقة\":\"Approval track\",\"الشهادة الطبية\":\"Medical certificate\",\"السنوات الأكاديمية\":\"Academic years\",\"الأيام المدفوعة\":\"Paid days\",\"وقت البداية\":\"Start time\",\"وقت النهاية\":\"End time\",\"الجنس\":\"Gender\",\"العنوان (عربي)\":\"Subject (Arabic)\",\"النص (عربي)\":\"Text (Arabic)\",\"العنوان (إنجليزي)\":\"Subject (English)\",\"النص (إنجليزي)\":\"Text (English)\",\"تاريخ التعيين\":\"Hire date\",\"المستوى الأكاديمي\":\"Academic level\",\"الوظيفة\":\"Job title\",\"نوع الإجازة\":\"Leave type\",\"السنة الأكاديمية\":\"Academic year\",\"رقم البصمة\":\"Fingerprint ID\",\"تحقق من البيانات\":\"Check the data\",\"تعارض مع بيانات موجودة\":\"Conflicts with existing data\",\"ليست لديك صلاحية لهذا الإجراء.\":\"You do not have permission to perform this action.\",\"السجل غير موجود.\":\"Record not found.\",\"النظام مشغول، حاول مرة أخرى.\":\"The system is busy, try again.\",\"انتهت الجلسة، سجّل الدخول من جديد.\":\"Your session ended. Please sign in again.\",\"حدث خطأ غير متوقع.\":\"An unexpected error occurred.\",\"لا يوجد اتصال بالإنترنت.\":\"No internet connection.\",\"تسجيل الخروج\":\"Sign out\",\"تسجيل الخروج من هذا الجهاز؟\":\"Sign out on this device?\",\"إعادة المحاولة\":\"Try again\",\"تثبيت التطبيق\":\"Install the app\",\"السلف\":\"Advances\",\"سلفتي\":\"My advance\",\"طلب سلفة\":\"Request an advance\",\"كل السلف\":\"All advances\",\"لا توجد سلف.\":\"No advances.\",\"المسدَّد\":\"Repaid\",\"المتبقي\":\"Remaining\",\"مسدَّدة\":\"Repaid\",\"مخصوم\":\"Deducted\",\"قادم\":\"Upcoming\",\"الأقساط\":\"Installments\",\"القسط\":\"Installment\",\"عدد الأقساط\":\"Number of installments\",\"شهر أول قسط\":\"First installment month\",\"تأجيل\":\"Postpone\",\"تم تأجيل القسط.\":\"Installment postponed.\",\"قسط سلفة\":\"Advance installment\",\"أقساط السلف\":\"Advance installments\",\"ملاحظة HR\":\"HR note\",\"المسدَّد / المتبقي\":\"Repaid / remaining\",\"لا توجد أقساط بعد.\":\"No installments yet.\",\"ملاحظة (إلزامية عند الرفض)\":\"Note (required to reject)\",\"تاريخ الطلب\":\"Requested on\",\"لا يمكن طلب سلفة جديدة قبل سداد الحالية.\":\"A new advance cannot be requested before the current one is repaid.\",\"السلفة تُسدَّد أقساطًا شهرية تُخصم من الراتب. تحدد الموارد البشرية عدد الأقساط عند الاعتماد.\":\"An advance is repaid in monthly installments deducted from salary. HR sets the number of installments when approving.\",\"تُخصم السلفة من الراتب أقساطًا شهرية تحددها الموارد البشرية.\":\"The advance is deducted from salary in monthly installments set by HR.\",\"يُرحَّل هذا القسط وكل ما بعده شهرًا واحدًا، فتمتد مدة السداد شهرًا.\":\"This installment and every later one move one month, so repayment takes a month longer.\",\"الوثائق\":\"Documents\",\"رفع وثيقة\":\"Upload document\",\"رفع\":\"Upload\",\"عقد العمل\":\"Employment contract\",\"الهوية\":\"ID card\",\"الصورة الشخصية\":\"Personal photo\",\"جواز السفر\":\"Passport\",\"وثيقة أخرى\":\"Other document\",\"رقم الوثيقة (اختياري)\":\"Document number (optional)\",\"تاريخ الانتهاء\":\"Expiry date\",\"ملاحظة (اختياري)\":\"Note (optional)\",\"الملف (PDF أو JPG أو PNG حتى 5MB)\":\"File (PDF, JPG or PNG up to 5MB)\",\"تم رفع الوثيقة.\":\"Document uploaded.\",\"مستبدلة\":\"Replaced\",\"تنتهي اليوم\":\"Expires today\",\"لا توجد وثائق بعد.\":\"No documents yet.\",\"تاريخ الرفع\":\"Uploaded\",\"ملاحظة\":\"Note\",\"عرض ملف\":\"Open file\",\"وثائق منتهية أو تنتهي قريبًا\":\"Documents expired or expiring soon\",\"وثيقة موظف تنتهي قريبًا\":\"Employee document expiring soon\",\"تم حفظ أيام التنبيه.\":\"Alert days saved.\",\"أيام التنبيه\":\"Alert days\",\"للموارد البشرية فقط. فتح أي ملف يُسجَّل في سجل التدقيق. الوثيقة الجديدة من النوع نفسه تحل محل السابقة، وتبقى السابقة في السجل.\":\"HR only. Opening any file is recorded in the audit log. A new document of the same type replaces the previous one, which stays in the history.\",\"تنبيه انتهاء وثائق الموظفين: أيام قبل الانتهاء (مفصولة بفواصل، ويُرسل أيضًا يوم الانتهاء)\":\"Employee document expiry alert: days before expiry (comma separated; also sent on the expiry day)\",\"تفعيل الإشعارات\":\"Turn on notifications\",\"تم تفعيل الإشعارات على هذا الجهاز.\":\"Notifications are on for this device.\",\"تعذّر تفعيل الإشعارات على هذا الجهاز.\":\"Notifications could not be turned on for this device.\",\"للتثبيت على iPhone: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».\":\"To install on iPhone: tap Share, then \\\"Add to Home Screen\\\".\",\"لوحة الموارد البشرية\":\"HR dashboard\",\"هذا الأسبوع\":\"This week\",\"هذا الشهر\":\"This month\",\"فترة مخصصة\":\"Custom period\",\"موظف نشط\":\"Active employees\",\"مجموع الخصومات\":\"Total deductions\",\"بانتظار إجراء HR\":\"Waiting for HR\",\"إجازات\":\"Leave\",\"تصحيحات حضور\":\"Attendance corrections\",\"حضور ناقص (هذا الشهر)\":\"Incomplete attendance (this month)\",\"يحتاج مراجعة (هذا الشهر)\":\"Needs review (this month)\",\"عند المدير الأكاديمي\":\"With the academic manager\",\"تنبيهات\":\"Alerts\",\"لا توجد تنبيهات.\":\"No alerts.\",\"لم تصل أي بصمات من الجهاز بعد. تأكد من تشغيل البرنامج الوسيط في المدرسة.\":\"No punches have arrived from the device yet. Make sure the bridge agent is running at school.\",\"لا توجد سنة أكاديمية تشمل اليوم، فلا يمكن تقديم طلبات إجازة. أضفها من الإعدادات.\":\"No academic year covers today, so leave requests cannot be submitted. Add it in Settings.\",\"لا يوجد جدول دوام افتراضي، فلا يُحسب التأخير والغياب لمن ليس له جدول. حدده من الإعدادات.\":\"There is no default work schedule, so lateness and absence are not calculated for employees without one. Set it in Settings.\",\"بحث بالاسم أو الرقم أو البريد\":\"Search by name, code or email\",\"كل الحالات\":\"All statuses\",\"إضافة موظف\":\"Add employee\",\"لا يوجد موظفون مطابقون.\":\"No matching employees.\",\"الجدول الافتراضي\":\"Default schedule\",\"بلا مستوى\":\"No level\",\"تمت إضافة الموظف وحساب دخوله.\":\"Employee and sign-in account added.\",\"تم حفظ التعديلات.\":\"Changes saved.\",\"الراتب الجديد\":\"New salary\",\"تم تغيير الراتب وحفظ السجل السابق.\":\"Salary changed; the previous one is kept in history.\",\"الحالة الجديدة\":\"New status\",\"تم تغيير الحالة.\":\"Status changed.\",\"الدور الجديد\":\"New role\",\"تم تغيير الدور.\":\"Role changed.\",\"الاستحقاق\":\"Entitlement\",\"التسويات\":\"Adjustments\",\"المستخدم\":\"Used\",\"المعلّق\":\"Pending\",\"لا توجد تسويات لهذه السنة.\":\"No adjustments this year.\",\"سجل التسويات\":\"Adjustment history\",\"تسوية جديدة\":\"New adjustment\",\"إضافة أيام\":\"Add days\",\"خصم أيام\":\"Deduct days\",\"عدد الأيام\":\"Number of days\",\"التسوية لا تُعدَّل ولا تُحذف. لتصحيح خطأ أضف تسوية معاكسة واذكر السبب.\":\"An adjustment cannot be edited or deleted. To fix a mistake, add an opposite adjustment and give the reason.\",\"حفظ التسوية\":\"Save adjustment\",\"تم حفظ التسوية.\":\"Adjustment saved.\",\"جارٍ تحميل الرصيد…\":\"Loading balance…\",\"رصيدي\":\"My balance\",\"طلب إجازة\":\"Request leave\",\"لم تُحدَّد سنة أكاديمية بعد. تواصل مع الموارد البشرية.\":\"No academic year is set yet. Contact HR.\",\"يوم معتمد هذه السنة (بلا رصيد)\":\"approved days this year (no balance)\",\"مستخدم\":\"Used\",\"متاح للطلب\":\"Available to request\",\"طلب نيابة عن موظف\":\"Request for an employee\",\"يحددها HR\":\"Set by HR\",\"السبب (اختياري)\":\"Reason (optional)\",\"طلب إجازة نيابة عن موظف\":\"Leave request for an employee\",\"حددي تاريخ البداية فقط. تحدد الموارد البشرية المدة والأيام المدفوعة عند الاعتماد.\":\"Choose the start date only. HR sets the duration and paid days on approval.\",\"مدفوعة / بدون راتب\":\"Paid / unpaid\",\"عرض الشهادة\":\"View certificate\",\"بانتظار إجرائك\":\"Waiting for you\",\"طلباتي\":\"My requests\",\"كل الطلبات\":\"All requests\",\"لا شيء بانتظارك.\":\"Nothing is waiting for you.\",\"لا توجد طلبات.\":\"No requests.\",\"رأي المدير\":\"Manager opinion\",\"مُقدَّم\":\"Given\",\"بانتظار الرأي\":\"Waiting for opinion\",\"إلغاء الطلب\":\"Cancel request\",\"إرسال الرأي\":\"Send opinion\",\"تم إرسال الرأي.\":\"Opinion sent.\",\"تم رفض الطلب.\":\"Request rejected.\",\"تم الاعتماد.\":\"Approved.\",\"تمت الموافقة وأُحيل الطلب إلى HR.\":\"Approved and sent to HR.\",\"تم إلغاء الطلب.\":\"Request cancelled.\",\"تم إرسال الطلب.\":\"Request sent.\",\"إرسال الطلب\":\"Send request\",\"ملاحظة أو سبب (إلزامي عند الرفض أو إبداء الرأي)\":\"Note or reason (required to reject or give an opinion)\",\"طلب ساعات استثناء\":\"Request exception hours\",\"من الساعة\":\"From time\",\"إلى الساعة\":\"To time\",\"يُطلب الاستثناء مسبقًا فقط، قبل وقت بدايته.\":\"Exception hours are requested in advance only, before they start.\",\"تكليف موظف\":\"Assign an employee\",\"طلب عمل في عطلة\":\"Request holiday work\",\"العمل في عطلة رسمية يحتاج موافقة مسبقة. البصمة في عطلة بلا موافقة تبقى \\\"يحتاج مراجعة\\\". لا يترتب عليه أجر إضافي تلقائي.\":\"Working on an official holiday needs prior approval. Punches on a holiday without approval stay \\\"Needs review\\\". It brings no automatic extra pay.\",\"العطلة\":\"Holiday\",\"تكليف من HR\":\"Assigned by HR\",\"لا توجد عطل رسمية قادمة. تُضاف العطل من الإعدادات.\":\"There are no upcoming official holidays. Holidays are added in Settings.\",\"سبب التكليف\":\"Reason for the assignment\",\"التكليف معتمد مباشرة، ويُبلَّغ الموظف.\":\"The assignment is approved at once and the employee is notified.\",\"يُطلب قبل يوم العطلة. يمر الطلب بمسار الموافقة نفسه للإجازات، ولا يُعتمد بعد مرور العطلة.\":\"Request it before the holiday. It follows the same approval track as leave and cannot be approved after the holiday.\",\"تكليف موظف بالعمل في عطلة\":\"Assign holiday work\",\"تكليف\":\"Assign\",\"تم التكليف.\":\"Assigned.\",\"ملاحظة أو سبب (إلزامي عند الرفض أو إبداء الرأي أو إلغاء المعتمد)\":\"Note or reason (required to reject, give an opinion or cancel an approved request)\",\"العمل في عطلة\":\"Holiday work\",\"طلبات تصحيح بانتظار قرارك\":\"Correction requests waiting for you\",\"طلبات التصحيح\":\"Correction requests\",\"إعادة المعالجة\":\"Reprocess\",\"حضور يوم\":\"Attendance for a day\",\"دخول\":\"In\",\"خروج\":\"Out\",\"لا توجد سجلات لهذا اليوم. تظهر السجلات بعد وصول البصمات ومعالجتها.\":\"No records for this day. Records appear once punches arrive and are processed.\",\"تصحيح\":\"Correct\",\"وقت الدخول الصحيح\":\"Correct check-in time\",\"وقت الخروج الصحيح\":\"Correct check-out time\",\"حفظ التصحيح\":\"Save correction\",\"تم التصحيح وإعادة معالجة اليوم.\":\"Corrected and the day reprocessed.\",\"تم إرسال طلب التصحيح إلى الموارد البشرية.\":\"Correction request sent to HR.\",\"المسجل\":\"Recorded\",\"المطلوب\":\"Requested\",\"سبب الرفض\":\"Rejection reason\",\"ملاحظة (اختيارية)\":\"Note (optional)\",\"تم الاعتماد وإعادة معالجة اليوم.\":\"Approved and the day reprocessed.\",\"تم الرفض.\":\"Rejected.\",\"أرقام بصمة غير مربوطة بموظف\":\"Fingerprint IDs not linked to an employee\",\"بصمات محفوظة لأرقام لا يملكها أي موظف. أدخل الرقم في ملف الموظف (\\\"رقم البصمة\\\") ثم أعد معالجة الأيام المعنية.\":\"Punches stored for IDs no employee has. Enter the ID in the employee's file (\\\"Fingerprint ID\\\"), then reprocess the days concerned.\",\"عدد البصمات\":\"Punches\",\"آخر بصمة\":\"Last punch\",\"كل موظفي المستوى (يوم واحد)\":\"All employees of the level (one day)\",\"حضور موظفي مستواي\":\"My level's attendance\",\"للاطلاع فقط. التصحيح والخصومات من صلاحيات الموارد البشرية.\":\"View only. Corrections and deductions are for HR.\",\"لا توجد سجلات.\":\"No records.\",\"حضوري\":\"My attendance\",\"لا توجد سجلات لهذا الشهر.\":\"No records this month.\",\"طلب تصحيح\":\"Request correction\",\"لم يسجلوا حضورًا اليوم (\":\"Not checked in today (\",\"للعلم بالحضور فقط، وليست قرار غياب.\":\"For awareness only; this is not an absence decision.\",\"خصوماتي\":\"My deductions\",\"لا توجد خصومات لهذا الشهر. اضغط \\\"احسب\\\".\":\"No deductions this month. Press \\\"Calculate\\\".\",\"لا توجد خصومات لهذا الشهر.\":\"No deductions this month.\",\"احسب\":\"Calculate\",\"أعد الحساب\":\"Recalculate\",\"اعتمد الشهر\":\"Approve month\",\"تم اعتماد خصومات الشهر.\":\"Month deductions approved.\",\"اقفل الشهر\":\"Lock month\",\"تم قفل الشهر.\":\"Month locked.\",\"بعد القفل لا يمكن إعادة الحساب ولا التعديل على هذا الشهر. متابعة؟\":\"After locking, this month cannot be recalculated or edited. Continue?\",\"المجموع لكل موظف\":\"Total per employee\",\"قيمة اليوم\":\"Day rate\",\"إعفاء\":\"Waive\",\"سبب الإعفاء\":\"Reason for waiving\",\"تم الإعفاء.\":\"Waived.\",\"للقراءة فقط. يسجّل كل عملية حساسة ومن نفّذها ومتى.\":\"Read only. Records every sensitive action, who did it and when.\",\"المنفذ\":\"Actor\",\"العملية\":\"Action\",\"نوع السجل\":\"Record type\",\"رقم السجل\":\"Record ID\",\"النتيجة\":\"Result\",\"كل المستخدمين\":\"All users\",\"كل العمليات\":\"All actions\",\"كل الأنواع\":\"All types\",\"كل النتائج\":\"All results\",\"نجحت\":\"Succeeded\",\"فشلت\":\"Failed\",\"مسح الفلاتر\":\"Clear filters\",\"تم التنزيل، وسُجّل التصدير في السجل.\":\"Downloaded; the export is recorded in the log.\",\"لا توجد سجلات مطابقة.\":\"No matching records.\",\"القيمة القديمة\":\"Old value\",\"القيمة الجديدة\":\"New value\",\"تقرير الخصومات الشهرية\":\"Monthly deductions report\",\"تقرير الحضور\":\"Attendance report\",\"تقرير الإجازات\":\"Leave report\",\"تقرير أرصدة الإجازات\":\"Leave balances report\",\"تقرير الغياب والتأخير\":\"Absence and late report\",\"تقرير ساعات الاستثناء\":\"Exception hours report\",\"تقرير الموافقات\":\"Approvals report\",\"التقرير الشامل لموظف\":\"Employee HR report\",\"التقرير\":\"Report\",\"مسودة: الشهر غير مقفل، والأرقام قد تتغير. اقفل الشهر من صفحة الخصومات قبل إرسال التقرير للمحاسب.\":\"Draft: the month is not locked and the figures may change. Lock the month on the Deductions page before sending the report to the accountant.\",\"مجموع الأيام\":\"Total days\",\"كل الأقسام\":\"All departments\",\"كل الموظفين\":\"All employees\",\"لا توجد سجلات حضور في هذه الفترة.\":\"No attendance records in this period.\",\"تأخير (مرات / دقائق)\":\"Late (times / minutes)\",\"خروج مبكر (مرات / دقائق)\":\"Early leave (times / minutes)\",\"التفاصيل اليومية\":\"Daily details\",\"الدخول\":\"Check-in\",\"الخروج\":\"Check-out\",\"التأخير\":\"Late\",\"الخروج المبكر\":\"Early leave\",\"لا توجد طلبات إجازة في هذه الفترة.\":\"No leave requests in this period.\",\"الأيام المعتمدة داخل الفترة لكل نوع.\":\"Approved days inside the period, per type.\",\"معلّقة\":\"Pending\",\"مدفوعة\":\"Paid\",\"غير مدفوعة\":\"Unpaid\",\"تاريخ التقديم\":\"Submitted on\",\"لا يوجد غياب ولا تأخير في هذه الفترة.\":\"No absence or lateness in this period.\",\"أيام الغياب\":\"Absence days\",\"مرات التأخير\":\"Times late\",\"دقائق التأخير\":\"Late minutes\",\"أيام الخصم\":\"Deducted days\",\"أيام الخصم من أسطر الخصومات المحسوبة (المعفاة لا تُحتسب). الغياب المغطى بإجازة لا يظهر هنا.\":\"Deducted days come from calculated deduction lines (waived ones are not counted). Absence covered by leave does not appear here.\",\"الخصم\":\"Deduction\",\"لا توجد طلبات استثناء في هذه الفترة.\":\"No exception requests in this period.\",\"المعتمدة\":\"Approved\",\"الساعات المعتمدة\":\"Approved hours\",\"كل المسارات\":\"All tracks\",\"الطلبات المقدَّمة في الفترة المختارة.\":\"Requests submitted in the chosen period.\",\"لا توجد طلبات في هذه الفترة.\":\"No requests in this period.\",\"مفتوحة\":\"Open\",\"متوسط أيام القرار\":\"Average days to decision\",\"متأخر\":\"Overdue\",\"التقديم\":\"Submitted\",\"المسار\":\"Track\",\"المدير الأكاديمي\":\"Academic manager\",\"القرار النهائي\":\"Final decision\",\"اختر موظفًا لعرض تقريره الشامل.\":\"Choose an employee to see their HR report.\",\"الغياب\":\"Absence\",\"التأخير (مرات / دقائق)\":\"Late (times / minutes)\",\"الخروج المبكر (مرات / دقائق)\":\"Early leave (times / minutes)\",\"ساعات استثناء معتمدة\":\"Approved exception hours\",\"مبلغ الخصم\":\"Deduction amount\",\"الإجازات المعتمدة داخل الفترة\":\"Approved leave inside the period\",\"طلبات معلّقة\":\"Pending requests\",\"الحضور اليومي\":\"Daily attendance\",\"لا توجد خصومات.\":\"No deductions.\",\"لا يوجد موظفون ضمن هذا الاختيار.\":\"No employees in this selection.\",\"المتبقي = الاستحقاق + التسويات − المعتمد. ملف Excel/PDF يعرض كل الأعمدة لكل نوع.\":\"Remaining = entitlement + adjustments − approved. The Excel/PDF file shows every column for each type.\",\"أيام السجلات\":\"Record days\",\"مرات الخروج المبكر\":\"Times left early\",\"دقائق الخروج المبكر\":\"Early-leave minutes\",\"التأخير (دقيقة)\":\"Late (minutes)\",\"الخروج المبكر (دقيقة)\":\"Early leave (minutes)\",\"الأيام المعتمدة داخل الفترة\":\"Approved days inside the period\",\"عدد الطلبات\":\"Requests\",\"أيام بدون راتب معتمدة\":\"Approved unpaid days\",\"الخصم (أيام — الحالة)\":\"Deduction (days — status)\",\"أيام حتى القرار\":\"Days to decision\",\"الغياب والتأخير\":\"Absence and lateness\",\"الإجازات المعتمدة داخل الفترة (أيام)\":\"Approved leave inside the period (days)\",\"الاستثناءات\":\"Exceptions\",\"أيام التأخير\":\"Late days\",\"أيام بدون راتب\":\"Unpaid days\",\"افتراضي\":\"default\",\"جداول الدوام\":\"Work schedules\",\"أيام العمل\":\"Working days\",\"الموظف الذي لم يُحدَّد له جدول يتبع الجدول الافتراضي.\":\"Employees without a schedule follow the default schedule.\",\"لا توجد جداول بعد.\":\"No schedules yet.\",\"أصبح الجدول الافتراضي.\":\"It is now the default schedule.\",\"اجعله افتراضيًا\":\"Make default\",\"يوم عمل\":\"Working day\",\"إضافة جدول دوام\":\"Add work schedule\",\"تم حفظ الجدول.\":\"Schedule saved.\",\"العطل الرسمية\":\"Official holidays\",\"العطلة تشمل كل الموظفين، ولا تغيّر حساب مدة الإجازات.\":\"A holiday applies to all employees and does not change how leave duration is counted.\",\"لا توجد عطل بعد.\":\"No holidays yet.\",\"إضافة عطلة رسمية\":\"Add official holiday\",\"تم حفظ العطلة.\":\"Holiday saved.\",\"النسخ الاحتياطي\":\"Backups\",\"نسخة احتياطية يدوية الآن\":\"Manual backup now\",\"سبب النسخة (مثل: قبل تعديل كبير)\":\"Reason for the copy (e.g. before a big change)\",\"إنشاء النسخة\":\"Create backup\",\"نسخة يدوية الآن\":\"Manual backup now\",\"الاسترجاع يتم يدويًا من مالك النظام (21 §9 B7).\":\"Restoring is done manually by the system owner (21 §9 B7).\",\"لا توجد نسخ بعد.\":\"No backups yet.\",\"إشعارات البريد\":\"Email notifications\",\"إرسال البريد مفعّل\":\"Email sending enabled\",\"تم تفعيل إرسال البريد.\":\"Email sending enabled.\",\"تم إيقاف إرسال البريد. تُحفظ الإشعارات دون إرسال.\":\"Email sending stopped. Notifications are stored without sending.\",\"تم حفظ القالب.\":\"Template saved.\",\"لم تُحدَّد أي سنة أكاديمية. لا تُقبل طلبات إجازة قبل إضافتها.\":\"No academic year is set. Leave requests are refused until one is added.\",\"إضافة سنة أكاديمية\":\"Add academic year\",\"الأيام خارج السنوات المحددة لا تقبل طلبات إجازة، ورصيد الإجازات يتجدد مع كل سنة.\":\"Days outside the defined years do not accept leave requests, and leave balances renew every year.\",\"تم الحفظ.\":\"Saved.\",\"الأقسام\":\"Departments\",\"لا توجد أقسام بعد.\":\"No departments yet.\",\"إضافة قسم\":\"Add department\",\"تم الحفظ. مسار الموافقة الجديد يسري على الطلبات الجديدة فقط.\":\"Saved. The new approval track applies to new requests only.\",\"المستويات الأكاديمية\":\"Academic levels\",\"لا توجد مستويات بعد.\":\"No levels yet.\",\"بلا مدير\":\"No manager\",\"إضافة مستوى\":\"Add level\",\"لتصحيح أي بيانات تواصل مع الموارد البشرية.\":\"To correct any details, contact HR.\",\"استيراد من Excel\":\"Import from Excel\",\"استيراد موظفين من Excel\":\"Import employees from Excel\",\"تحقق\":\"Check\",\"استيراد\":\"Import\",\"نسخ عناوين الأعمدة\":\"Copy column titles\",\"الصق هنا الأسطر المنسوخة من Excel\":\"Paste the rows copied from Excel here\",\"نُسخت العناوين. الصقها في أول سطر من ملف Excel.\":\"Titles copied. Paste them in the first row of the Excel file.\",\"رتّب الأعمدة في Excel بهذا الترتيب، ثم انسخ الأسطر والصقها هنا. سطر العناوين اختياري.\":\"Order the Excel columns like this, then copy the rows and paste them here. The title row is optional.\",\"الجنس: ذكر أو أنثى. التاريخ: 2026-09-01 أو 01/09/2026 (يوم/شهر/سنة).\":\"Gender: ذكر or أنثى (Male/Female). Date: 2026-09-01 or 01/09/2026 (day/month/year).\",\"القسم والمستوى وجدول العمل: بالاسم العربي أو الإنجليزي كما في الإعدادات. المستوى والجدول والبصمة اختيارية.\":\"Department, level and work schedule: by their Arabic or English name as in Settings. Level, schedule and fingerprint are optional.\",\"لا يُستورد شيء ما دام في سطر خطأ. لكل موظف يُنشأ حساب دخول بدور موظف.\":\"Nothing is imported while any row has an error. Each employee gets a sign-in account with the Employee role.\",\"السطر\":\"Row\",\"سليم\":\"OK\",\"مكرر في السطر\":\"Repeated in row\",\"صحّح الأخطاء قبل الاستيراد.\":\"Fix the errors before importing.\",\"لا توجد أسطر للاستيراد.\":\"There are no rows to import.\",\"استورد 150 موظفًا على الأكثر في المرة الواحدة.\":\"Import at most 150 employees at a time.\",\"القائمة\":\"Menu\",\"الملف جاهز\":\"The file is ready\",\"تنزيل الملف\":\"Download file\",\"المدرسة\":\"School\",\"اسم المدرسة (عربي)\":\"School name (Arabic)\",\"اسم المدرسة (إنجليزي)\":\"School name (English)\",\"الشعار\":\"Logo\",\"لا يوجد شعار.\":\"No logo.\",\"تغيير الشعار\":\"Change logo\",\"إزالة الشعار\":\"Remove logo\",\"حفظ الاسم\":\"Save name\",\"تم حفظ اسم المدرسة.\":\"School name saved.\",\"تم حفظ الشعار.\":\"Logo saved.\",\"تمت إزالة الشعار.\":\"Logo removed.\",\"الشعار (PNG أو JPG حتى 500KB)\":\"Logo (PNG or JPG up to 500KB)\",\"يظهران في الشريط العلوي وصفحة الدخول. إن تُرك الاسم الإنجليزي فارغًا يظهر العربي في الواجهة الإنجليزية.\":\"Shown in the top bar and the sign-in page. If the English name is empty, the Arabic one is shown in English mode.\",\"كل رسالة تحمل العربية ثم الإنجليزية. المتغيرات المتاحة: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}\":\"Every message carries Arabic, then English. Available variables: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}\"},\"patterns\":[[\"^تأخير (\\\\d+) د$\",\"Late $1 min\"],[\"^خروج مبكر (\\\\d+) د$\",\"Early leave $1 min\"],[\"^(\\\\d+) د$\",\"$1 min\"],[\"^تمت المعالجة: (\\\\d+) سجل تغيّر\\\\.$\",\"Processed: $1 record(s) changed.\"],[\"^تصحيح حضور: (.+)$\",\"Attendance correction: $1\"],[\"^طلب تصحيح حضور (.+)$\",\"Attendance correction request $1\"],[\"^(اعتماد|رفض) تصحيح: (.+)$\",\"$1 correction: $2\"],[\"^المسجل الآن: دخول (.*)، خروج (.*)\\\\. اترك الحقل فارغًا إن لم يتغير\\\\.$\",\"Currently recorded: in $1, out $2. Leave a field empty if it did not change.\"],[\"^المسجل: (.*)، المطلوب: (.*)\\\\. السبب: (.*)$\",\"Recorded: $1, requested: $2. Reason: $3\"],[\"^سبب الرفض: (.*)$\",\"Rejection reason: $1\"],[\"^(\\\\S+)–(\\\\S+) من (\\\\d+)$\",\"$1–$2 of $3\"],[\"^(\\\\d+) رقم بصمة غير مربوط بموظف\\\\. أدخل رقم البصمة في ملفات الموظفين\\\\.$\",\"$1 fingerprint ID(s) not linked to an employee. Enter the fingerprint ID in the employee files.\"],[\"^آخر مزامنة للبصمة كانت (.+)\\\\. تأكد أن البرنامج الوسيط يعمل\\\\.$\",\"The last fingerprint sync was $1. Make sure the bridge agent is running.\"],[\"^(\\\\d+) طلب ينتظر قرار HR منذ أكثر من (\\\\d+) أيام\\\\.$\",\"$1 request(s) have waited for HR for more than $2 days.\"],[\"^(.*) · آخر تحديث (.*)$\",\"$1 · last updated $2\"],[\"^المجموع: (.*) \\\\((.*) يوم\\\\)$\",\"Total: $1 ($2 days)\"],[\"^المجموع: (.*)$\",\"Total: $1\"],[\"^حالة الشهر: ?(.*)$\",\"Month status: $1\"],[\"^(\\\\d+) سجل حضور ناقص يحتاج تصحيحًا قبل الاعتماد$\",\"$1 incomplete attendance record(s) to correct before approval\"],[\"^(\\\\d+) سجل يحتاج مراجعة \\\\(لا يُخصم\\\\)$\",\"$1 record(s) need review (not deducted)\"],[\"^تم الحساب: (\\\\d+) جديد، (\\\\d+) معدَّل، (\\\\d+) ملغى\\\\. تنبيه: (.*)\\\\.$\",\"Calculated: $1 new, $2 adjusted, $3 voided. Warning: $4.\"],[\"^تم الحساب: (\\\\d+) جديد، (\\\\d+) معدَّل، (\\\\d+) ملغى\\\\.$\",\"Calculated: $1 new, $2 adjusted, $3 voided.\"],[\"^إعفاء من خصم: (.+)$\",\"Waive deduction: $1\"],[\"^(غياب|تأخير|إجازة بدون راتب|أمومة بدون راتب)، (.*) يوم، (.*)$\",\"$1, $2 days, $3\"],[\"^(.*) \\\\(User ID في الجهاز\\\\)$\",\"$1 (User ID on the device)\"],[\"^تعديل: (.+)$\",\"Edit: $1\"],[\"^رفع وثيقة: (.+)$\",\"Upload document: $1\"],[\"^سلفة: (.+)$\",\"Advance: $1\"],[\"^تأجيل قسط (\\\\d{4}-\\\\d{2}): (.+)$\",\"Postpone the $1 installment: $2\"],[\"^القسط الشهري: ([\\\\d.]+) لمدة (\\\\d+) شهر$\",\"Monthly installment: $1 for $2 months\"],[\"^منتهية منذ (\\\\d+) يوم$\",\"Expired $1 days ago\"],[\"^بعد (\\\\d+) يوم$\",\"In $1 days\"],[\"^(\\\\d+) يوم$\",\"$1 days\"],[\"^(\\\\d+) وثيقة موظف منتهية الصلاحية \\\\(هوية أو جواز أو عقد\\\\)\\\\.$\",\"$1 employee document(s) expired (ID, passport or contract).\"],[\"^(\\\\d+) وثيقة موظف تنتهي قريبًا\\\\.$\",\"$1 employee document(s) expiring soon.\"],[\"^تغيير الراتب: (.+)$\",\"Change salary: $1\"],[\"^(.*) \\\\(الحالي (.*)\\\\)$\",\"$1 (current $2)\"],[\"^تغيير الحالة: (.+)$\",\"Change status: $1\"],[\"^(.*) \\\\(لمنتهي الخدمة فقط\\\\)$\",\"$1 (for terminated employees only)\"],[\"^تغيير الدور: (.+)$\",\"Change role: $1\"],[\"^رصيد الإجازات: (.+)$\",\"Leave balance: $1\"],[\"^عدد الساعات: (.+)$\",\"Hours: $1\"],[\"^العطل القادمة: (.+)$\",\"Upcoming holidays: $1\"],[\"^(.*) \\\\(تكليف من HR\\\\)$\",\"$1 (assigned by HR)\"],[\"^متبقٍ من (\\\\S+)$\",\"remaining of $1\"],[\"^ ?\\\\((\\\\S+) بدون راتب\\\\)$\",\" ($1 unpaid)\"],[\"^(.*) \\\\(PDF أو JPG أو PNG حتى 5MB\\\\)$\",\"$1 (PDF, JPG or PNG up to 5MB)\"],[\"^المدة: (\\\\d+) يوم \\\\(أيام تقويمية شاملة\\\\)\\\\.(.*)$\",\"Duration: $1 days (calendar days, inclusive).$2\"],[\"^المتاح لك في (\\\\S+): (\\\\S+) يوم\\\\.(.*)$\",\"Available to you in $1: $2 days.$3\"],[\"^المدة أكبر من المتاح؛ لما يزيد اطلب إجازة بدون راتب\\\\.$\",\"The duration is more than available; request unpaid leave for the rest.\"],[\"^الإجازة بدون راتب لا تُخصم من رصيد، وتُحسب أيامها كلها غير مدفوعة\\\\.$\",\"Unpaid leave does not use a balance; all its days are unpaid.\"],[\"^طلب إجازة (.+)$\",\"Leave request: $1\"],[\"^(.*) \\\\(عند الاعتماد\\\\)$\",\"$1 (on approval)\"],[\"^(.*) \\\\(والباقي بدون راتب\\\\)$\",\"$1 (the rest unpaid)\"],[\"^تنزيل (.+)$\",\"Download $1\"],[\"^تم إنشاء (.+)، وحُفظت نسخة منه في مجلد التقارير في Drive\\\\.$\",\"$1 created; a copy is kept in the reports folder in Drive.\"],[\"^(\\\\d+) سطر خصم في التفاصيل \\\\(تظهر كاملة في ملف Excel/PDF\\\\)\\\\.$\",\"$1 deduction line(s) in the details (all shown in the Excel/PDF file).\"],[\"^(\\\\d+) سجل يومي\\\\. اختر موظفًا لعرض تفاصيله هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 daily record(s). Choose an employee to see the details here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) طلب\\\\. اختر موظفًا لعرض طلباته هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 request(s). Choose an employee to see their requests here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) سطر\\\\. اختر موظفًا لعرض تفاصيله هنا، أو نزّل ملف Excel/PDF لكل التفاصيل\\\\.$\",\"$1 line(s). Choose an employee to see the details here, or download the Excel/PDF file for all details.\"],[\"^(\\\\d+) طلبًا\\\\. ضيّق الفلاتر لعرضها هنا، أو نزّل ملف Excel/PDF\\\\.$\",\"$1 requests. Narrow the filters to show them here, or download the Excel/PDF file.\"],[\"^(\\\\S+) يوم — (.+)$\",\"$1 days — $2\"],[\"^الطلبات المقدَّمة في الفترة المختارة\\\\. تظهر طلبات موظفي مستواك التي تشارك فيها فقط\\\\.$\",\"Requests submitted in the chosen period. Only your level's requests that you take part in are shown.\"],[\"^مفتوحة أكثر من (\\\\d+) أيام$\",\"Open more than $1 days\"],[\"^بانتظار (.+)$\",\"Waiting for $1\"],[\"^الرصيد (\\\\S+)$\",\"Balance $1\"],[\"^(\\\\S+) من (\\\\S+) \\\\(معلّق (\\\\S+)\\\\)$\",\"$1 of $2 (pending $3)\"],[\"^(\\\\d+) من (\\\\d+)$\",\"$1 of $2\"],[\"^(.+): المتبقي$\",\"$1: remaining\"],[\"^تعديل جدول: (.+)$\",\"Edit schedule: $1\"],[\"^تعديل عطلة: (.+)$\",\"Edit holiday: $1\"],[\"^نسخة آلية كل يوم الساعة 02:00، ويُحتفظ بآخر 30 نسخة آلية \\\\(الأقدم يُنقل إلى سلة Drive\\\\)\\\\. النسخ اليدوية لا تُحذف\\\\. ?(.*)$\",\"An automatic copy is made every day at 02:00, and the last 30 are kept (older ones go to the Drive trash). Manual copies are never deleted. $1\"],[\"^قالب: (.+)$\",\"Template: $1\"],[\"^تعديل سنة: (.+)$\",\"Edit year: $1\"],[\"^(.*) \\\\(مثل 2026-2027\\\\)$\",\"$1 (e.g. 2026-2027)\"],[\"^تعديل قسم: (.+)$\",\"Edit department: $1\"],[\"^تعديل مستوى: (.+)$\",\"Edit level: $1\"],[\"^(.*) \\\\(من له دور مدير أكاديمي\\\\)$\",\"$1 (users with the academic manager role)\"],[\"^لم يسجلوا حضورًا اليوم \\\\((.*)\\\\)$\",\"Not checked in today ($1)\"],[\"^تقرير الحضور من (\\\\S+) إلى (\\\\S+)$\",\"Attendance report from $1 to $2\"],[\"^تقرير الإجازات من (\\\\S+) إلى (\\\\S+)$\",\"Leave report from $1 to $2\"],[\"^تقرير أرصدة الإجازات للسنة الأكاديمية (\\\\S+)$\",\"Leave balances report, academic year $1\"],[\"^تقرير الغياب والتأخير من (\\\\S+) إلى (\\\\S+)$\",\"Absence and late report from $1 to $2\"],[\"^تقرير ساعات الاستثناء من (\\\\S+) إلى (\\\\S+)$\",\"Exception hours report from $1 to $2\"],[\"^تقرير الموافقات: طلبات مقدَّمة من (\\\\S+) إلى (\\\\S+)$\",\"Approvals report: requests submitted from $1 to $2\"],[\"^التقرير الشامل للموظف من (\\\\S+) إلى (\\\\S+)$\",\"Employee HR report from $1 to $2\"],[\"^تقرير الخصومات الشهرية (\\\\S+)$\",\"Monthly deductions report $1\"],[\"^الرصيد في السنة الأكاديمية (\\\\S+)$\",\"Balance in academic year $1\"],[\"^الحالة: (.+) — مسودة: الشهر غير مقفل، والأرقام قد تتغير$\",\"Status: $1 — Draft: the month is not locked and the figures may change\"],[\"^الحالة: (.+)$\",\"Status: $1\"],[\"^أُنشئ: (.+) بواسطة (.+)$\",\"Created: $1 by $2\"],[\"^القسم: (.+)$\",\"Department: $1\"],[\"^الموظف: (.+)$\",\"Employee: $1\"],[\"^النوع: (.+)$\",\"Type: $1\"],[\"^المسار: (.+)$\",\"Track: $1\"],[\"^(اعتمد|رفض|وافق|أبدى رأيه|ألغى): (.+)$\",\"$1: $2\"],[\"^(\\\\S+) — (محسوب|معتمد|معدَّل|مقفل|معفى)$\",\"$1 — $2\"],[\"^(الأحد|الاثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت) (.+)$\",\"$1 $2\"],[\"^(مرضية|عرضية|بدون راتب|أمومة) (\\\\d{4}-\\\\d{2}-\\\\d{2}.*)$\",\"$1 $2\"],[\"^(\\\\d+) من (\\\\d+) سليم\\\\.$\",\"$1 of $2 OK.\"],[\"^استيراد (\\\\d+) موظف$\",\"Import $1 employee(s)\"],[\"^تم استيراد (\\\\d+) موظف مع حسابات دخولهم\\\\.$\",\"$1 employee(s) imported with their sign-in accounts.\"],[\"^مكرر في السطر (\\\\d+)\\\\.$\",\"Repeated in row $1.\"],[\"^(.+) · (.+) · (\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2})$\",\"$1 · $2 · $3\"]]}");
       var BRANDING = JSON.parse(AppTransport.cachedBranding());
     </script>
     <script>
@@ -520,7 +526,9 @@ var AppTransport = (function () {
         REQUEST_APPROVED: 'اعتماد الطلب',
         REQUEST_REJECTED: 'رفض الطلب',
         REQUEST_CANCELLED_BY_HR: 'إلغاء HR للطلب',
+        DOCUMENT_EXPIRING: 'وثيقة موظف تنتهي قريبًا',
       },
+      documentTypes: { CONTRACT: 'عقد العمل', ID: 'الهوية', PHOTO: 'الصورة الشخصية', PASSPORT: 'جواز السفر', OTHER: 'وثيقة أخرى' },
       leaveTypes: { SICK: 'مرضية', CASUAL: 'عرضية', UNPAID: 'بدون راتب', MATERNITY: 'أمومة' },
       requestStatus: {
         DRAFT: 'مسودة', PENDING: 'قيد الانتظار', UNDER_REVIEW: 'بانتظار قرار HR', APPROVED: 'معتمدة',
@@ -1043,6 +1051,155 @@ var AppTransport = (function () {
 </script>
 
     <script>
+  /**
+   * Employee documents dialog (D48, 03 §14). HR only; the server checks every call.
+   * App.documents.open(employee) from the employees list; App.documents.expiring() from the dashboard.
+   */
+  App.documents = (function () {
+    var el = App.el;
+    var L = App.LABELS;
+    var MAX_BYTES = 5 * 1024 * 1024;
+    var NEEDS_EXPIRY = ['ID', 'PASSPORT'];
+
+    function dueBadge(d) {
+      if (d.daysLeft === null || d.daysLeft === undefined) return '—';
+      if (d.daysLeft < 0) return App.badge('REJECTED', 'منتهية منذ ' + (-d.daysLeft) + ' يوم');
+      if (d.daysLeft === 0) return App.badge('REJECTED', 'تنتهي اليوم');
+      return d.daysLeft <= 30 ? App.badge('PENDING', 'بعد ' + d.daysLeft + ' يوم') : d.daysLeft + ' يوم';
+    }
+
+    function preview(container, f) {
+      var bytes = atob(f.base64);
+      var arr = new Uint8Array(bytes.length);
+      for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+      var url = URL.createObjectURL(new Blob([arr], { type: f.mimeType }));
+      container.textContent = '';
+      container.appendChild(el('a', { href: url, download: f.fileName, className: 'btn small primary' }, ['تنزيل ' + f.fileName]));
+      if (f.mimeType.indexOf('image/') === 0) container.appendChild(el('img', { src: url, alt: f.fileName }));
+      container.hidden = false;
+    }
+
+    function open(employee) {
+      var dlg = el('dialog', { className: 'wide' });
+      var body = el('div', { className: 'dialog-body' }, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
+      dlg.appendChild(body);
+      dlg.addEventListener('close', function () { dlg.remove(); });
+      document.body.appendChild(dlg);
+      dlg.showModal();
+      load();
+
+      function load() {
+        App.api('listEmployeeDocuments', employee.employeeId).then(function (res) { draw(res); })
+          .catch(function (err) { body.textContent = App.errorText(err); });
+      }
+
+      function draw(res) {
+        body.textContent = '';
+        var viewer = el('div', { className: 'file-preview', hidden: true });
+        var photo = res.documents.find(function (d) { return d.docType === 'PHOTO' && d.status === 'ACTIVE'; });
+        var head = el('div', { className: 'doc-head' }, [el('h2', { 'data-i18n': 'off' }, [res.fullName]), el('span', { className: 'spacer' })]);
+        if (photo) {
+          var img = el('div', { className: 'doc-photo' });
+          head.insertBefore(img, head.firstChild);
+          App.api('getEmployeeDocumentFile', photo.documentId).then(function (f) {
+            img.appendChild(el('img', { src: 'data:' + f.mimeType + ';base64,' + f.base64, alt: '' }));
+          }).catch(function () {});
+        }
+        head.appendChild(el('button', { type: 'button', className: 'btn primary', onclick: function () { uploadForm(); } }, ['رفع وثيقة']));
+        body.appendChild(head);
+        body.appendChild(el('p', { className: 'muted' }, ['للموارد البشرية فقط. فتح أي ملف يُسجَّل في سجل التدقيق. الوثيقة الجديدة من النوع نفسه تحل محل السابقة، وتبقى السابقة في السجل.']));
+
+        var rows = res.documents.map(function (d) {
+          var openBtn = el('button', { type: 'button', className: 'btn small' }, ['عرض']);
+          openBtn.addEventListener('click', function () {
+            App.busy(openBtn, App.api('getEmployeeDocumentFile', d.documentId)).then(function (f) { preview(viewer, f); })
+              .catch(function (err) { App.toast(App.errorText(err)); });
+          });
+          return el('tr', { className: d.status === 'REPLACED' ? 'muted' : '' }, [
+            el('td', {}, [L.documentTypes[d.docType] || d.docType]),
+            el('td', { 'data-i18n': 'off' }, [d.documentNumber || '—']),
+            el('td', {}, [d.expiryDate || '—']),
+            el('td', {}, [d.status === 'REPLACED' ? App.badge('CANCELLED', 'مستبدلة') : dueBadge(d)]),
+            el('td', { 'data-i18n': 'off' }, [d.note || '']),
+            el('td', {}, [d.createdAt.slice(0, 10)]),
+            el('td', { className: 'actions' }, [openBtn]),
+          ]);
+        });
+        if (!rows.length) rows = [el('tr', {}, [el('td', { colSpan: 7, className: 'empty' }, ['لا توجد وثائق بعد.'])])];
+        body.appendChild(el('div', { className: 'table-wrap' }, [el('table', {}, [
+          el('thead', {}, [el('tr', {}, ['النوع', 'الرقم', 'تاريخ الانتهاء', 'الحالة', 'ملاحظة', 'تاريخ الرفع', ''].map(function (h) { return el('th', {}, [h]); }))]),
+          el('tbody', {}, rows),
+        ])]));
+        body.appendChild(viewer);
+        body.appendChild(el('div', { className: 'form-actions' }, [
+          el('button', { type: 'button', className: 'btn', onclick: function () { dlg.close(); } }, ['إغلاق']),
+        ]));
+      }
+
+      function uploadForm() {
+        App.formDialog('رفع وثيقة: ' + employee.fullName, [
+          { name: 'docType', label: 'النوع', type: 'select', required: true, full: true,
+            options: [{ value: '', label: '— اختر —' }].concat(App.options(L.documentTypes)) },
+          { name: 'documentNumber', label: 'رقم الوثيقة (اختياري)' },
+          { name: 'expiryDate', label: 'تاريخ الانتهاء', type: 'date' },
+          { name: 'note', label: 'ملاحظة (اختياري)', type: 'textarea', full: true },
+          { name: 'file', label: 'الملف (PDF أو JPG أو PNG حتى 5MB)', type: 'file', required: true, full: true,
+            accept: '.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png' },
+        ], 'رفع', function (values) {
+          if (values.file && values.file.size > MAX_BYTES) return Promise.reject({ code: 'VALIDATION', message: 'The file is larger than 5MB.' });
+          return App.readFile(values.file).then(function (upload) {
+            var input = { docType: values.docType, documentNumber: values.documentNumber, note: values.note, file: upload };
+            if (values.expiryDate) input.expiryDate = values.expiryDate;
+            return App.api('uploadEmployeeDocument', employee.employeeId, input);
+          }).then(function () { App.toast('تم رفع الوثيقة.'); });
+        }, load, function (inputs) {
+          function update() {
+            var t = inputs.docType.value;
+            inputs.expiryDate.wrapper.hidden = t === 'PHOTO';
+            inputs.expiryDate.required = NEEDS_EXPIRY.indexOf(t) !== -1;
+            inputs.documentNumber.wrapper.hidden = t === 'PHOTO';
+          }
+          inputs.docType.addEventListener('change', update);
+          update();
+        });
+      }
+    }
+
+    /** Documents expired or expiring within the alert period (dashboard). */
+    function expiring() {
+      App.api('listExpiringDocuments').then(function (items) {
+        var dlg = el('dialog', { className: 'wide' });
+        var rows = items.map(function (d) {
+          return el('tr', {}, [
+            el('td', { 'data-i18n': 'off' }, [d.employeeName + ' (' + d.employeeCode + ')']),
+            el('td', {}, [L.documentTypes[d.docType] || d.docType]),
+            el('td', {}, [d.expiryDate]),
+            el('td', {}, [dueBadge(d)]),
+            el('td', { className: 'actions' }, [el('button', { type: 'button', className: 'btn small', onclick: function () {
+              dlg.close(); open({ employeeId: d.employeeId, fullName: d.employeeName });
+            } }, ['الوثائق'])]),
+          ]);
+        });
+        if (!rows.length) rows = [el('tr', {}, [el('td', { colSpan: 5, className: 'empty' }, ['لا يوجد.'])])];
+        dlg.appendChild(el('div', { className: 'dialog-body' }, [
+          el('h2', {}, ['وثائق منتهية أو تنتهي قريبًا']),
+          el('div', { className: 'table-wrap' }, [el('table', {}, [
+            el('thead', {}, [el('tr', {}, ['الموظف', 'النوع', 'تاريخ الانتهاء', 'الحالة', ''].map(function (h) { return el('th', {}, [h]); }))]),
+            el('tbody', {}, rows),
+          ])]),
+          el('div', { className: 'form-actions' }, [el('button', { type: 'button', className: 'btn', onclick: function () { dlg.close(); } }, ['إغلاق'])]),
+        ]));
+        dlg.addEventListener('close', function () { dlg.remove(); });
+        document.body.appendChild(dlg);
+        dlg.showModal();
+      }).catch(function (err) { App.toast(App.errorText(err)); });
+    }
+
+    return { open: open, expiring: expiring };
+  })();
+</script>
+
+    <script>
   /** HR dashboard (docs/10_HR_DASHBOARD.md §25). */
   App.pages.dashboard = (function () {
     var el = App.el;
@@ -1055,6 +1212,8 @@ var AppTransport = (function () {
       SYNC_ERRORS: function (a) { return a.count + ' مزامنة جزئية أو فاشلة خلال 7 أيام. راجع جدول SyncLogs.'; },
       REVIEW_OVERDUE: function (a) { return a.count + ' طلب ينتظر قرار HR منذ أكثر من ' + a.detail + ' أيام.'; },
       NO_ACADEMIC_YEAR: function () { return 'لا توجد سنة أكاديمية تشمل اليوم، فلا يمكن تقديم طلبات إجازة. أضفها من الإعدادات.'; },
+      DOCUMENTS_EXPIRED: function (a) { return a.count + ' وثيقة موظف منتهية الصلاحية (هوية أو جواز أو عقد).'; },
+      DOCUMENTS_EXPIRING: function (a) { return a.count + ' وثيقة موظف تنتهي قريبًا.'; },
       NO_DEFAULT_SCHEDULE: function () { return 'لا يوجد جدول دوام افتراضي، فلا يُحسب التأخير والغياب لمن ليس له جدول. حدده من الإعدادات.'; },
     };
 
@@ -1138,7 +1297,9 @@ var AppTransport = (function () {
         else {
           alerts.appendChild(el('ul', { className: 'alerts' }, d.alerts.map(function (a) {
             var text = ALERTS[a.code] ? ALERTS[a.code](a) : a.code;
-            return el('li', { className: a.severity }, [text]);
+            var more = /^DOCUMENTS_/.test(a.code)
+              ? [' ', el('button', { type: 'button', className: 'btn small', onclick: App.documents.expiring }, ['عرض'])] : [];
+            return el('li', { className: a.severity }, [text].concat(more));
           })));
         }
         root.appendChild(alerts);
@@ -1232,6 +1393,7 @@ var AppTransport = (function () {
               el('button', { type: 'button', className: 'btn small', onclick: function () { openStatusForm(e); } }, ['الحالة']),
               el('button', { type: 'button', className: 'btn small', onclick: function () { openRoleForm(e); } }, ['الدور']),
               el('button', { type: 'button', className: 'btn small', onclick: function () { openBalance(e); } }, ['الرصيد']),
+              el('button', { type: 'button', className: 'btn small', onclick: function () { App.documents.open(e); } }, ['الوثائق']),
             ]),
           ]));
         });
@@ -2378,7 +2540,7 @@ var AppTransport = (function () {
   App.pages.deductions = (function () {
     var el = App.el;
     var view = { root: null, user: null, period: '' };
-    var SOURCES = { ABSENCE: 'غياب', LATE: 'تأخير', UNPAID_LEAVE: 'إجازة بدون راتب', MATERNITY_UNPAID: 'أمومة بدون راتب' };
+    var SOURCES = { ABSENCE: 'غياب', LATE: 'تأخير', UNPAID_LEAVE: 'إجازة بدون راتب', MATERNITY_UNPAID: 'أمومة بدون راتب', ADVANCE: 'قسط سلفة' };
     var LINE_STATUS = { CALCULATED: 'محسوب', APPROVED: 'معتمد', ADJUSTED: 'معدَّل بعد إعادة الحساب', REJECTED: 'معفى', LOCKED: 'مقفل' };
     var PERIOD_STATE = { OPEN: 'لم يُحسب', CALCULATED: 'محسوب، بانتظار الاعتماد', APPROVED: 'معتمد', LOCKED: 'مقفل' };
     var CLS = { CALCULATED: 'PENDING', ADJUSTED: 'PENDING', APPROVED: 'APPROVED', LOCKED: 'DRAFT', REJECTED: 'CANCELLED', OPEN: 'DRAFT' };
@@ -2474,7 +2636,7 @@ var AppTransport = (function () {
           el('td', {}, [App.badge(CLS[l.status] || '', LINE_STATUS[l.status] || l.status)]),
         ]);
         if (hr) {
-          var canWaive = ['CALCULATED', 'APPROVED', 'ADJUSTED'].indexOf(l.status) !== -1;
+          var canWaive = ['CALCULATED', 'APPROVED', 'ADJUSTED'].indexOf(l.status) !== -1 && l.sourceType !== 'ADVANCE'; // D49: postpone instead
           cells.push(el('td', { className: 'actions' }, canWaive ? [el('button', { type: 'button', className: 'btn small', onclick: function () { waive(l); } }, ['إعفاء'])] : []));
         }
         return el('tr', {}, cells);
@@ -2491,6 +2653,222 @@ var AppTransport = (function () {
       ], 'إعفاء', function (values) {
         return App.api('rejectDeduction', l.deductionId, { reason: values.reason }).then(function () { App.toast('تم الإعفاء.'); });
       }, function () { render(view.root, view.user); });
+    }
+
+    return render;
+  })();
+</script>
+
+    <script>
+  /** Salary advances (D49, docs/08_DEDUCTIONS_AND_PAYROLL.md §10). The server decides what each role may see and do. */
+  App.pages.advances = (function () {
+    var el = App.el;
+    var L = App.LABELS;
+    var view = { root: null, user: null, status: '' };
+
+    function money(n, currency) { return Number(n).toFixed(2) + (currency ? ' ' + currency : ''); }
+    function nextMonth() {
+      var d = new Date();
+      d.setMonth(d.getMonth() + 1, 1);
+      return d.getFullYear() + '-' + (d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1);
+    }
+
+    function statusBadge(a) {
+      if (a.repaid) return App.badge('APPROVED', 'مسدَّدة');
+      return App.badge(a.status, L.requestStatus[a.status] || a.status);
+    }
+
+    function render(root, user) {
+      view.root = root;
+      view.user = user;
+      root.textContent = '';
+      if (user.employeeId) root.appendChild(mineCard());
+      if (user.role === 'HR') {
+        root.appendChild(listCard('queue', 'بانتظار قرارك'));
+        root.appendChild(listCard('all', 'كل السلف'));
+      }
+    }
+
+    function refresh() { render(view.root, view.user); }
+
+    function table(headers, rows, empty) {
+      var body = el('tbody', {}, rows.length ? rows : [el('tr', {}, [el('td', { colSpan: headers.length, className: 'empty' }, [empty])])]);
+      return el('div', { className: 'table-wrap' }, [el('table', {}, [
+        el('thead', {}, [el('tr', {}, headers.map(function (h) { return el('th', {}, [h]); }))]), body,
+      ])]);
+    }
+
+    function scheduleTable(a, onPostpone) {
+      return table(['الشهر', 'القسط', 'الحالة', ''], a.schedule.map(function (s) {
+        return el('tr', {}, [
+          el('td', {}, [s.period]), el('td', {}, [money(s.amount)]),
+          el('td', {}, [s.paid ? App.badge('APPROVED', 'مخصوم') : App.badge('PENDING', 'قادم')]),
+          el('td', { className: 'actions' }, onPostpone && !s.paid
+            ? [el('button', { type: 'button', className: 'btn small', onclick: function () { onPostpone(s.period); } }, ['تأجيل'])] : []),
+        ]);
+      }), 'لا توجد أقساط بعد.');
+    }
+
+    // --- the employee's own advances ----------------------------------------------------
+
+    function mineCard() {
+      var card = el('div', { className: 'card' }, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
+      App.api('listAdvances', { view: 'mine' }).then(function (items) {
+        card.textContent = '';
+        var open = items.find(function (a) { return a.status === 'PENDING' || (a.status === 'APPROVED' && !a.repaid); });
+        var ask = el('button', { type: 'button', className: 'btn primary', onclick: requestForm }, ['طلب سلفة']);
+        ask.disabled = !!open;
+        card.appendChild(el('div', { className: 'toolbar' }, [el('h2', {}, ['سلفتي']), el('span', { className: 'spacer' }), ask]));
+        if (open) {
+          card.appendChild(el('p', { className: 'muted' }, ['لا يمكن طلب سلفة جديدة قبل سداد الحالية.']));
+          card.appendChild(el('dl', { className: 'profile' }, [
+            el('dt', {}, ['المبلغ']), el('dd', {}, [money(open.amount, open.currency)]),
+            el('dt', {}, ['الحالة']), el('dd', {}, [statusBadge(open)]),
+            el('dt', {}, ['المسدَّد']), el('dd', {}, [money(open.paid)]),
+            el('dt', {}, ['المتبقي']), el('dd', {}, [money(open.remaining)]),
+          ]));
+          if (open.schedule.length) card.appendChild(scheduleTable(open, null));
+          if (open.status === 'PENDING') {
+            card.appendChild(el('div', { className: 'form-actions' }, [
+              el('button', { type: 'button', className: 'btn', onclick: function () { details(open.advanceId); } }, ['التفاصيل']),
+            ]));
+          }
+        } else {
+          card.appendChild(el('p', { className: 'muted' }, ['السلفة تُسدَّد أقساطًا شهرية تُخصم من الراتب. تحدد الموارد البشرية عدد الأقساط عند الاعتماد.']));
+        }
+        var history = items.filter(function (a) { return a !== open; });
+        if (history.length) {
+          card.appendChild(el('h3', {}, ['السجل']));
+          card.appendChild(table(['تاريخ الطلب', 'المبلغ', 'الحالة', ''], history.map(function (a) {
+            return el('tr', {}, [
+              el('td', {}, [String(a.submittedAt).slice(0, 10)]), el('td', {}, [money(a.amount, a.currency)]),
+              el('td', {}, [statusBadge(a)]),
+              el('td', { className: 'actions' }, [el('button', { type: 'button', className: 'btn small', onclick: function () { details(a.advanceId); } }, ['التفاصيل'])]),
+            ]);
+          }), ''));
+        }
+      }).catch(function (err) { card.textContent = App.errorText(err); });
+      return card;
+    }
+
+    function requestForm() {
+      App.formDialog('طلب سلفة', [
+        { name: 'amount', label: 'المبلغ', type: 'number', required: true, full: true },
+        { name: 'reason', label: 'السبب', type: 'textarea', required: true, full: true },
+        { name: 'hint', type: 'note', value: 'تُخصم السلفة من الراتب أقساطًا شهرية تحددها الموارد البشرية.' },
+      ], 'إرسال الطلب', function (values) {
+        return App.api('submitAdvanceRequest', { amount: values.amount, reason: values.reason })
+          .then(function () { App.toast('تم إرسال الطلب.'); });
+      }, refresh);
+    }
+
+    // --- HR lists ------------------------------------------------------------------------
+
+    function listCard(mode, title) {
+      var card = el('div', { className: 'card' });
+      var toolbar = el('div', { className: 'toolbar' }, [el('h2', {}, [title]), el('span', { className: 'spacer' })]);
+      if (mode === 'all') {
+        var status = el('select', {}, [el('option', { value: '' }, ['كل الحالات'])].concat(
+          ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'].map(function (s) { return el('option', { value: s }, [L.requestStatus[s]]); })));
+        status.value = view.status;
+        status.addEventListener('change', function () { view.status = status.value; refresh(); });
+        toolbar.appendChild(status);
+      }
+      card.appendChild(toolbar);
+      var holder = el('div', {}, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
+      card.appendChild(holder);
+      var q = { view: mode };
+      if (mode === 'all' && view.status) q.status = view.status;
+      App.api('listAdvances', q).then(function (items) {
+        holder.textContent = '';
+        holder.appendChild(table(['الموظف', 'المبلغ', 'تاريخ الطلب', 'الحالة', 'المتبقي', ''], items.map(function (a) {
+          return el('tr', {}, [
+            el('td', { 'data-i18n': 'off' }, [a.employeeName + ' (' + a.employeeCode + ')']),
+            el('td', {}, [money(a.amount, a.currency)]), el('td', {}, [String(a.submittedAt).slice(0, 10)]),
+            el('td', {}, [statusBadge(a)]), el('td', {}, [a.status === 'APPROVED' ? money(a.remaining) : '—']),
+            el('td', { className: 'actions' }, [el('button', { type: 'button', className: 'btn small' + (a.status === 'PENDING' ? ' primary' : ''),
+              onclick: function () { details(a.advanceId); } }, [a.status === 'PENDING' ? 'مراجعة' : 'التفاصيل'])]),
+          ]);
+        }), mode === 'queue' ? 'لا شيء بانتظارك.' : 'لا توجد سلف.'));
+      }).catch(function (err) { holder.textContent = App.errorText(err); });
+      return card;
+    }
+
+    // --- details, decision, postponement --------------------------------------------------
+
+    function details(advanceId) {
+      App.api('getAdvance', advanceId).then(function (a) {
+        var dlg = el('dialog');
+        var error = el('div', { className: 'form-error', role: 'alert' });
+        var content = [
+          el('h2', {}, ['سلفة: ' + a.employeeName]),
+          el('dl', { className: 'profile' }, [
+            el('dt', {}, ['المبلغ']), el('dd', {}, [money(a.amount, a.currency)]),
+            el('dt', {}, ['السبب']), el('dd', { 'data-i18n': 'off' }, [a.reason || '—']),
+            el('dt', {}, ['تاريخ الطلب']), el('dd', {}, [String(a.submittedAt).slice(0, 10)]),
+            el('dt', {}, ['الحالة']), el('dd', {}, [statusBadge(a)]),
+            el('dt', {}, ['المسدَّد / المتبقي']), el('dd', {}, [money(a.paid) + ' / ' + money(a.remaining)]),
+            el('dt', {}, ['ملاحظة HR']), el('dd', { 'data-i18n': 'off' }, [a.decisionNote || '—']),
+          ]),
+        ];
+        if (a.schedule.length) {
+          content.push(el('h3', {}, ['الأقساط']));
+          content.push(scheduleTable(a, a.canPostpone ? function (period) { dlg.close(); postpone(a, period); } : null));
+        }
+        var buttons = [el('button', { type: 'button', className: 'btn', onclick: function () { dlg.close(); } }, ['إغلاق'])];
+        function act(label, cls, fn) {
+          var b = el('button', { type: 'button', className: 'btn ' + cls }, [label]);
+          b.addEventListener('click', function () {
+            error.textContent = '';
+            App.busy(b, fn()).then(function (msg) { App.toast(msg); dlg.close(); refresh(); })
+              .catch(function (err) { error.textContent = App.errorText(err); });
+          });
+          buttons.push(b);
+        }
+        if (a.canDecide) {
+          var count = el('input', { type: 'number', min: '1', max: '24', step: '1', value: '3' });
+          var first = el('input', { type: 'month', value: nextMonth() });
+          var note = el('textarea', { rows: 2, placeholder: 'ملاحظة (إلزامية عند الرفض)' });
+          var preview = el('p', { className: 'muted' });
+          var update = function () {
+            var n = Number(count.value);
+            preview.textContent = n >= 1 ? 'القسط الشهري: ' + (Math.floor(a.amount / n * 100) / 100).toFixed(2) + ' لمدة ' + n + ' شهر' : '';
+          };
+          count.addEventListener('input', update);
+          update();
+          content.push(el('div', { className: 'grid' }, [
+            el('label', {}, [el('span', {}, ['عدد الأقساط']), count]),
+            el('label', {}, [el('span', {}, ['شهر أول قسط']), first]),
+          ]), preview, el('label', { className: 'full' }, [el('span', {}, ['الملاحظة']), note]));
+          act('رفض', 'danger', function () {
+            return App.api('decideAdvance', a.advanceId, { decision: 'REJECT', comment: note.value }).then(function () { return 'تم رفض الطلب.'; });
+          });
+          act('اعتماد', 'primary', function () {
+            return App.api('decideAdvance', a.advanceId, { decision: 'APPROVE', installments: count.value, firstPeriod: first.value, comment: note.value })
+              .then(function () { return 'تم الاعتماد.'; });
+          });
+        }
+        if (a.canCancel) {
+          act('إلغاء الطلب', 'danger', function () {
+            return App.api('cancelAdvance', a.advanceId).then(function () { return 'تم إلغاء الطلب.'; });
+          });
+        }
+        content.push(error, el('div', { className: 'form-actions' }, buttons));
+        dlg.appendChild(el('div', { className: 'dialog-body' }, content));
+        dlg.addEventListener('close', function () { dlg.remove(); });
+        document.body.appendChild(dlg);
+        dlg.showModal();
+      }).catch(function (err) { App.toast(App.errorText(err)); });
+    }
+
+    function postpone(a, period) {
+      App.formDialog('تأجيل قسط ' + period + ': ' + a.employeeName, [
+        { name: 'info', type: 'note', value: 'يُرحَّل هذا القسط وكل ما بعده شهرًا واحدًا، فتمتد مدة السداد شهرًا.' },
+        { name: 'reason', label: 'السبب', type: 'textarea', required: true, full: true },
+      ], 'تأجيل', function (values) {
+        return App.api('postponeAdvanceInstallment', a.advanceId, { period: period, reason: values.reason })
+          .then(function () { App.toast('تم تأجيل القسط.'); });
+      }, refresh);
     }
 
     return render;
@@ -2586,12 +2964,12 @@ var AppTransport = (function () {
           content.appendChild(el('div', { className: 'empty' }, ['لا توجد خصومات لهذا الشهر.']));
           return;
         }
-        var headers = ['الرقم الوظيفي', 'الاسم', 'القسم', 'غياب', 'تأخير', 'بدون راتب', 'مجموع الأيام', 'المبلغ'];
+        var headers = ['الرقم الوظيفي', 'الاسم', 'القسم', 'غياب', 'تأخير', 'بدون راتب', 'مجموع الأيام', 'أقساط السلف', 'المبلغ'];
         var body = el('tbody', {}, r.summary.map(function (s) {
           return el('tr', {}, [s.employeeCode, s.employeeName, s.department, s.absenceDays, s.lateDays, s.unpaidDays, s.totalDays,
-            s.amount.toFixed(2) + ' ' + s.currency].map(function (v) { return el('td', {}, [String(v)]); }));
+            (s.advances || 0).toFixed(2), s.amount.toFixed(2) + ' ' + s.currency].map(function (v) { return el('td', {}, [String(v)]); }));
         }));
-        body.appendChild(el('tr', { className: 'total-row' }, [el('td', { colSpan: 7 }, ['المجموع']), el('td', {}, [r.total.toFixed(2)])]));
+        body.appendChild(el('tr', { className: 'total-row' }, [el('td', { colSpan: 8 }, ['المجموع']), el('td', {}, [r.total.toFixed(2)])]));
         content.appendChild(el('div', { className: 'table-wrap' }, [el('table', {}, [
           el('thead', {}, [el('tr', {}, headers.map(function (h) { return el('th', {}, [h]); }))]), body,
         ])]));
@@ -2919,7 +3297,7 @@ var AppTransport = (function () {
         } });
     }
 
-    var DED_SOURCES = { ABSENCE: 'غياب', LATE: 'تأخير', UNPAID_LEAVE: 'إجازة بدون راتب', MATERNITY_UNPAID: 'أمومة بدون راتب' };
+    var DED_SOURCES = { ABSENCE: 'غياب', LATE: 'تأخير', UNPAID_LEAVE: 'إجازة بدون راتب', MATERNITY_UNPAID: 'أمومة بدون راتب', ADVANCE: 'قسط سلفة' };
 
     function renderLeaveBalances(card, toolbar) {
       var types = App.LABELS.leaveTypes;
@@ -3003,7 +3381,7 @@ var AppTransport = (function () {
     var view = { root: null, user: null, query: {}, offset: 0, filters: null };
     var ACTIONS = {
       CREATE: 'إنشاء', UPDATE: 'تعديل', APPROVE: 'اعتماد', REJECT: 'رفض', CANCEL: 'إلغاء', RESTORE: 'استعادة',
-      DISABLE: 'تعطيل', ADJUST: 'تسوية', RECALCULATE: 'إعادة حساب', LOCK: 'قفل', UNLOCK: 'فك قفل', EXPORT: 'تصدير',
+      DISABLE: 'تعطيل', ADJUST: 'تسوية', RECALCULATE: 'إعادة حساب', LOCK: 'قفل', UNLOCK: 'فك قفل', EXPORT: 'تصدير', VIEW: 'عرض ملف',
     };
 
     function render(root, user) {
@@ -3357,7 +3735,19 @@ var AppTransport = (function () {
           .then(function () { App.toast(want ? 'تم تفعيل إرسال البريد.' : 'تم إيقاف إرسال البريد. تُحفظ الإشعارات دون إرسال.'); })
           .catch(function (err) { checkbox.checked = !want; App.toast(App.errorText(err)); });
       });
-      box.appendChild(el('p', { className: 'muted' }, ['كل رسالة تحمل العربية ثم الإنجليزية. المتغيرات المتاحة: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}']));
+      box.appendChild(el('p', { className: 'muted' }, ['كل رسالة تحمل العربية ثم الإنجليزية. المتغيرات المتاحة: {{employeeName}} {{requestType_ar}} {{requestType_en}} {{period}} {{reason}} {{appUrl}}. ولتنبيه الوثائق: {{documentType_ar}} {{documentType_en}} {{expiryDate}} {{days_ar}} {{days_en}}']));
+      // D48: days before a document expires to alert HR.
+      var days = el('input', { type: 'text', inputMode: 'numeric', placeholder: '30,7', 'aria-label': 'أيام التنبيه' });
+      var saveDays = el('button', { type: 'button', className: 'btn' }, ['حفظ']);
+      App.api('getDocumentAlertDays').then(function (r) { days.value = r.days.join(','); }).catch(function () {});
+      saveDays.addEventListener('click', function () {
+        App.busy(saveDays, App.api('saveDocumentAlertDays', { days: days.value }))
+          .then(function (r) { days.value = r.days.join(','); App.toast('تم حفظ أيام التنبيه.'); })
+          .catch(function (err) { App.toast(App.errorText(err)); });
+      });
+      box.appendChild(el('div', { className: 'toolbar' }, [
+        el('label', {}, [el('span', {}, ['تنبيه انتهاء وثائق الموظفين: أيام قبل الانتهاء (مفصولة بفواصل، ويُرسل أيضًا يوم الانتهاء) ']), days]), saveDays,
+      ]));
       App.api('listNotificationTemplates').then(function (templates) {
         fill(body, templates, 2, '');
         templates.forEach(function (t) {
