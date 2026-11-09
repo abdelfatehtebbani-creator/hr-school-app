@@ -70,6 +70,9 @@
   [dir=rtl] details.fold[open] > summary::before { transform: rotate(90deg); }
   details.fold[open] > summary { margin-bottom: 14px; }
   .fold-body > h2:first-child, .fold-body > .toolbar:first-child > h2 { display: none; }
+  /* A page section folded by App.fold: the section's own card sits inside without a second frame. */
+  .fold-body > .card { border: 0; box-shadow: none; padding: 0; margin: 0; background: none; }
+  .fold-body > .card > h2:first-child, .fold-body > .card > .toolbar:first-child > h2 { display: none; }
   /* Official letters (D50): fields beside an A4 preview; stacked on a phone. */
   dialog.wide:has(.cert-layout) { width: min(1180px, 97vw); }
   .cert-layout { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.25fr); gap: 16px; align-items: start; }
@@ -275,7 +278,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109043447"};
+var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109052016"};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1025,7 +1028,7 @@ var AppTransport = (function () {
           });
         }).catch(function () { /* counts are a convenience */ });
         countsTimer = setTimeout(refreshCounts, 120000);
-      }, 400);
+      }, 1500); // after the page's own data, which matters more
     }
 
     /** The test copy is never mistaken for production: a striped banner and a red sidebar on every screen. */
@@ -1097,6 +1100,28 @@ var AppTransport = (function () {
     }
 
     return {
+      /**
+       * A closed section whose content is built (and its data loaded) only when first opened.
+       * key: remembered per user's browser, so a section left open stays open on the next visit.
+       * make(): returns the section's card; its own title is hidden since the summary carries it.
+       */
+      fold: function (key, title, make) {
+        var opened = {};
+        try { opened = JSON.parse(localStorage.getItem('hr.folds') || '{}'); } catch (e) { opened = {}; }
+        var body = el('div', { className: 'fold-body' });
+        var details = el('details', { className: 'card fold' }, [el('summary', {}, [title]), body]);
+        function build() { if (!body.firstChild) body.appendChild(make()); }
+        if (opened[key]) { details.open = true; build(); }
+        details.addEventListener('toggle', function () {
+          if (details.open) build();
+          try {
+            var now = JSON.parse(localStorage.getItem('hr.folds') || '{}');
+            now[key] = details.open;
+            localStorage.setItem('hr.folds', JSON.stringify(now));
+          } catch (e) { /* remembering is a convenience */ }
+        });
+        return details;
+      },
       /** HR and the director see everyone's records; only HR changes them (D51). */
       seesAll: function (user) { return !!user && (user.role === 'HR' || user.role === 'DIRECTOR'); },
       /** The director only views (D51): no personal requests, balance or profile, even if linked to an employee record. */
@@ -1336,7 +1361,7 @@ var AppTransport = (function () {
             ]),
           ]);
         }));
-        if (!rows.length) { card.hidden = true; return; }
+        if (!rows.length) { holder.appendChild(el('p', { className: 'muted' }, ['لا شيء بانتظارك.'])); return; }
         holder.appendChild(el('div', { className: 'table-wrap' }, [el('table', {}, [
           el('thead', {}, [el('tr', {}, ['الموظف', 'النوع', 'التفاصيل', 'التاريخ', ''].map(function (h) { return el('th', {}, [h]); }))]),
           el('tbody', {}, rows),
@@ -1586,7 +1611,11 @@ var AppTransport = (function () {
       view.user = user || view.user;
       var hr = !view.user || view.user.role === 'HR';
       root.textContent = '';
-      if (hr) root.appendChild(App.documents.reviewCard(function () { render(root, view.user); }));
+      if (hr) {
+        root.appendChild(App.fold('employees.review', 'بانتظار مراجعتك من الموظفين', function () {
+          return App.documents.reviewCard(function () { render(root, view.user); });
+        }));
+      }
       var search = el('input', { type: 'search', placeholder: 'بحث بالاسم أو الرقم أو البريد', value: view.query.search });
       var status = el('select', {}, [el('option', { value: '' }, ['كل الحالات'])].concat(
         Object.keys(STATUS).map(function (s) { return el('option', { value: s }, [STATUS[s]]); })));
@@ -1917,9 +1946,13 @@ var AppTransport = (function () {
       view.user = user;
       root.textContent = '';
       // Anyone linked to an employee record has a balance and can request leave (04 §31 L6).
-      if (App.actsAsEmployee(user)) root.appendChild(balanceCard());
-      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') root.appendChild(listCard('queue', 'بانتظار إجرائك'));
-      root.appendChild(listCard(user.role === 'EMPLOYEE' ? 'mine' : 'all', user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات'));
+      if (App.actsAsEmployee(user)) root.appendChild(App.fold('leaves.balance', 'رصيدي', balanceCard));
+      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') {
+        root.appendChild(App.fold('leaves.queue', 'بانتظار إجرائك', function () { return listCard('queue', 'بانتظار إجرائك'); }));
+      }
+      var mode = user.role === 'EMPLOYEE' ? 'mine' : 'all';
+      var title = user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات';
+      root.appendChild(App.fold('leaves.' + mode, title, function () { return listCard(mode, title); }));
     }
 
     function refresh() { render(view.root, view.user); }
@@ -2214,8 +2247,12 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') root.appendChild(listCard('queue', 'بانتظار إجرائك'));
-      root.appendChild(listCard(user.role === 'EMPLOYEE' ? 'mine' : 'all', user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات'));
+      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') {
+        root.appendChild(App.fold('exceptions.queue', 'بانتظار إجرائك', function () { return listCard('queue', 'بانتظار إجرائك'); }));
+      }
+      var mode = user.role === 'EMPLOYEE' ? 'mine' : 'all';
+      var title = user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات';
+      root.appendChild(App.fold('exceptions.' + mode, title, function () { return listCard(mode, title); }));
     }
 
     function refresh() { render(view.root, view.user); }
@@ -2380,8 +2417,12 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') root.appendChild(listCard('queue', 'بانتظار إجرائك'));
-      root.appendChild(listCard(user.role === 'EMPLOYEE' ? 'mine' : 'all', user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات'));
+      if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') {
+        root.appendChild(App.fold('holidayWork.queue', 'بانتظار إجرائك', function () { return listCard('queue', 'بانتظار إجرائك'); }));
+      }
+      var mode = user.role === 'EMPLOYEE' ? 'mine' : 'all';
+      var title = user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات';
+      root.appendChild(App.fold('holidayWork.' + mode, title, function () { return listCard(mode, title); }));
     }
 
     function refresh() { render(view.root, view.user); }
@@ -2565,14 +2606,16 @@ var AppTransport = (function () {
       root.textContent = '';
       if (App.seesAll(user)) {
         if (!view.date) view.date = today();
-        if (user.role === 'HR') root.appendChild(correctionsCard('queue', 'طلبات تصحيح بانتظار قرارك'));
-        root.appendChild(dayCard());
-        root.appendChild(unmatchedCard());
+        if (user.role === 'HR') {
+          root.appendChild(App.fold('attendance.corrections', 'طلبات تصحيح بانتظار قرارك', function () { return correctionsCard('queue', 'طلبات تصحيح بانتظار قرارك'); }));
+        }
+        root.appendChild(App.fold('attendance.day', 'حضور يوم', dayCard));
+        root.appendChild(App.fold('attendance.unmatched', 'أرقام بصمة غير مربوطة بموظف', unmatchedCard));
       } else {
         if (!view.month) view.month = today().slice(0, 7);
-        if (user.role === 'ACADEMIC_MANAGER') root.appendChild(levelCard());
-        root.appendChild(monthCard());
-        root.appendChild(correctionsCard('mine', 'طلبات التصحيح'));
+        if (user.role === 'ACADEMIC_MANAGER') root.appendChild(App.fold('attendance.level', 'حضور موظفي مستواي', levelCard));
+        root.appendChild(App.fold('attendance.month', 'حضوري', monthCard));
+        root.appendChild(App.fold('attendance.mineCorrections', 'طلبات التصحيح', function () { return correctionsCard('mine', 'طلبات التصحيح'); }));
       }
     }
 
@@ -2945,9 +2988,9 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (App.actsAsEmployee(user)) root.appendChild(mineCard());
-      if (user.role === 'HR') root.appendChild(listCard('queue', 'بانتظار قرارك'));
-      if (App.seesAll(user)) root.appendChild(listCard('all', 'كل السلف'));
+      if (App.actsAsEmployee(user)) root.appendChild(App.fold('advances.mine', 'سلفتي', mineCard));
+      if (user.role === 'HR') root.appendChild(App.fold('advances.queue', 'بانتظار قرارك', function () { return listCard('queue', 'بانتظار قرارك'); }));
+      if (App.seesAll(user)) root.appendChild(App.fold('advances.all', 'كل السلف', function () { return listCard('all', 'كل السلف'); }));
     }
 
     function refresh() { render(view.root, view.user); }
@@ -3164,9 +3207,9 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (App.actsAsEmployee(user)) root.appendChild(mineCard());
-      if (user.role === 'HR') root.appendChild(listCard('queue', 'بانتظار الإصدار'));
-      if (App.seesAll(user)) root.appendChild(listCard('all', 'كل الشهادات'));
+      if (App.actsAsEmployee(user)) root.appendChild(App.fold('certificates.mine', 'شهاداتي', mineCard));
+      if (user.role === 'HR') root.appendChild(App.fold('certificates.queue', 'بانتظار الإصدار', function () { return listCard('queue', 'بانتظار الإصدار'); }));
+      if (App.seesAll(user)) root.appendChild(App.fold('certificates.all', 'كل الشهادات', function () { return listCard('all', 'كل الشهادات'); }));
     }
 
     function refresh() { render(view.root, view.user); }
@@ -3910,10 +3953,11 @@ var AppTransport = (function () {
     var F = App.LABELS.fields;
     root.textContent = '';
     var card = el('div', { className: 'card' }, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
-    root.appendChild(card);
     var mineCard = el('div', { className: 'card' });
-    root.appendChild(mineCard);
+    root.appendChild(App.fold('profile.main', 'ملفي', function () { loadProfile(); return card; }));
+    root.appendChild(App.fold('profile.mine', 'بياناتي العامة', function () { drawMine(); return mineCard; }));
 
+    function loadProfile() {
     App.api('getMyProfile').then(function (p) {
       card.textContent = '';
       card.appendChild(el('div', { className: 'toolbar' }, [el('h2', {}, ['ملفي']), el('span', { className: 'spacer' }),
@@ -3928,11 +3972,10 @@ var AppTransport = (function () {
         return acc.concat([el('dt', {}, [r[0]]), el('dd', {}, [r[1] || '—'])]);
       }, [])));
       card.appendChild(el('p', { className: 'muted' }, ['الوظيفة والراتب والعقد تحددها الموارد البشرية.']));
-      drawMine();
     }).catch(function (err) {
       card.textContent = App.errorText(err);
-      mineCard.hidden = true;
     });
+    }
 
     function drawMine() {
       mineCard.textContent = '';
