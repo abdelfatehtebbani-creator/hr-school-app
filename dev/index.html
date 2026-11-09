@@ -228,7 +228,7 @@
         </div>
         <nav id="nav" hidden>
           <button type="button" data-page="dashboard" data-roles="HR DIRECTOR">اللوحة</button>
-          <button type="button" data-page="employees" data-roles="HR DIRECTOR">الموظفون</button>
+          <button type="button" data-page="employees" data-roles="HR">الموظفون</button>
           <button type="button" data-page="leaves" data-roles="HR EMPLOYEE ACADEMIC_MANAGER DIRECTOR">الإجازات</button>
           <button type="button" data-page="exceptions" data-roles="HR EMPLOYEE ACADEMIC_MANAGER DIRECTOR">ساعات الاستثناء</button>
           <button type="button" data-page="holidayWork" data-roles="HR EMPLOYEE ACADEMIC_MANAGER DIRECTOR">العمل في العطل</button>
@@ -240,7 +240,7 @@
           <button type="button" data-page="presence" data-roles="HR ACADEMIC_MANAGER DIRECTOR">غياب اليوم</button>
           <button type="button" data-page="audit" data-roles="HR DIRECTOR">سجل التدقيق</button>
           <button type="button" data-page="settings" data-roles="HR">الإعدادات</button>
-          <button type="button" data-page="profile" data-roles="HR EMPLOYEE ACADEMIC_MANAGER DIRECTOR">ملفي</button>
+          <button type="button" data-page="profile" data-roles="HR EMPLOYEE ACADEMIC_MANAGER">ملفي</button>
         </nav>
         <div id="who" class="who"></div>
         <button type="button" id="signout" class="signout" hidden>تسجيل الخروج</button>
@@ -275,7 +275,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109041234"};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109043118"};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1099,6 +1099,8 @@ var AppTransport = (function () {
     return {
       /** HR and the director see everyone's records; only HR changes them (D51). */
       seesAll: function (user) { return !!user && (user.role === 'HR' || user.role === 'DIRECTOR'); },
+      /** The director only views (D51): no personal requests, balance or profile, even if linked to an employee record. */
+      actsAsEmployee: function (user) { return !!user && user.role !== 'DIRECTOR' && (user.role === 'EMPLOYEE' || !!user.employeeId); },
       LABELS: LABELS, api: api, errorText: errorText, toast: toast, el: el, badge: badge, busy: busy,
       formDialog: formDialog, options: options, readFile: readFile, download: download, start: start, go: go, pages: {},
       lang: function () { return state.lang; },
@@ -1915,7 +1917,7 @@ var AppTransport = (function () {
       view.user = user;
       root.textContent = '';
       // Anyone linked to an employee record has a balance and can request leave (04 §31 L6).
-      if (user.role === 'EMPLOYEE' || user.employeeId) root.appendChild(balanceCard());
+      if (App.actsAsEmployee(user)) root.appendChild(balanceCard());
       if (user.role !== 'EMPLOYEE' && user.role !== 'DIRECTOR') root.appendChild(listCard('queue', 'بانتظار إجرائك'));
       root.appendChild(listCard(user.role === 'EMPLOYEE' ? 'mine' : 'all', user.role === 'EMPLOYEE' ? 'طلباتي' : 'كل الطلبات'));
     }
@@ -2236,7 +2238,7 @@ var AppTransport = (function () {
         toolbar.appendChild(status);
       }
       // Anyone linked to an employee record can request exception hours for themselves (05 §17).
-      if (mode !== 'queue' && (view.user.role === 'EMPLOYEE' || view.user.employeeId)) {
+      if (mode !== 'queue' && App.actsAsEmployee(view.user)) {
         toolbar.appendChild(el('button', { type: 'button', className: 'btn primary', onclick: openRequestForm }, ['طلب ساعات استثناء']));
       }
       card.appendChild(toolbar);
@@ -2398,7 +2400,7 @@ var AppTransport = (function () {
           toolbar.appendChild(el('button', { type: 'button', className: 'btn', onclick: function () { openForm(true); } }, ['تكليف موظف']));
         }
       }
-      if (mode !== 'queue' && view.user.role !== 'HR' && view.user.employeeId) {
+      if (mode !== 'queue' && view.user.role !== 'HR' && App.actsAsEmployee(view.user)) {
         toolbar.appendChild(el('button', { type: 'button', className: 'btn primary', onclick: function () { openForm(false); } }, ['طلب عمل في عطلة']));
       }
       card.appendChild(toolbar);
@@ -2943,7 +2945,7 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (user.employeeId) root.appendChild(mineCard());
+      if (App.actsAsEmployee(user)) root.appendChild(mineCard());
       if (user.role === 'HR') root.appendChild(listCard('queue', 'بانتظار قرارك'));
       if (App.seesAll(user)) root.appendChild(listCard('all', 'كل السلف'));
     }
@@ -3162,7 +3164,7 @@ var AppTransport = (function () {
       view.root = root;
       view.user = user;
       root.textContent = '';
-      if (user.employeeId) root.appendChild(mineCard());
+      if (App.actsAsEmployee(user)) root.appendChild(mineCard());
       if (user.role === 'HR') root.appendChild(listCard('queue', 'بانتظار الإصدار'));
       if (App.seesAll(user)) root.appendChild(listCard('all', 'كل الشهادات'));
     }
