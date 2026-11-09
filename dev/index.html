@@ -284,7 +284,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109112645"};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109154016"};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1606,7 +1606,7 @@ var AppTransport = (function () {
     var F = App.LABELS.fields;
     var STATUS = App.LABELS.status;
     var PAGE_SIZE = 25;
-    var view = { query: { search: '', status: '', offset: 0 }, lookups: null, root: null, body: null, pager: null };
+    var view = { query: { search: '', status: '', departmentId: '', offset: 0 }, lookups: null, root: null, body: null, pager: null };
 
     function deptName(id) {
       var d = (view.lookups.departments || []).find(function (x) { return x.departmentId === id; });
@@ -1640,9 +1640,13 @@ var AppTransport = (function () {
         timer = setTimeout(function () { view.query.search = search.value; view.query.offset = 0; load(); }, 300);
       });
       status.addEventListener('change', function () { view.query.status = status.value; view.query.offset = 0; load(); });
+      // Department filter: filled once the lookups arrive.
+      var dept = el('select', { 'aria-label': 'القسم' }, [el('option', { value: '' }, ['كل الأقسام'])]);
+      dept.addEventListener('change', function () { view.query.departmentId = dept.value; view.query.offset = 0; load(); });
+      view.deptSelect = dept;
 
       root.appendChild(el('div', { className: 'toolbar' }, [
-        search, status, el('span', { className: 'spacer' }),
+        search, dept, status, el('span', { className: 'spacer' }),
       ].concat(hr ? [
         el('button', { type: 'button', className: 'btn', onclick: openImport }, ['استيراد من Excel']),
         el('button', { type: 'button', className: 'btn primary', onclick: function () { openEmployeeForm(null); } }, ['إضافة موظف']),
@@ -1660,7 +1664,14 @@ var AppTransport = (function () {
 
       view.body.appendChild(el('tr', {}, [el('td', { colSpan: 7, className: 'empty' }, ['جارٍ التحميل…'])]));
       App.api('getEmployeeFormLookups')
-        .then(function (lookups) { view.lookups = lookups; load(); })
+        .then(function (lookups) {
+          view.lookups = lookups;
+          (lookups.departments || []).forEach(function (d) {
+            view.deptSelect.appendChild(el('option', { value: d.departmentId }, [App.name(d) || d.departmentId]));
+          });
+          view.deptSelect.value = view.query.departmentId;
+          load();
+        })
         .catch(function (err) { showRowMessage(App.errorText(err)); });
     }
 
@@ -1673,6 +1684,7 @@ var AppTransport = (function () {
       var q = { search: view.query.search, status: view.query.status, offset: view.query.offset, limit: PAGE_SIZE };
       if (!q.search) delete q.search;
       if (!q.status) delete q.status;
+      if (view.query.departmentId) q.departmentId = view.query.departmentId;
       App.api('listEmployees', q).then(function (res) {
         view.body.textContent = '';
         if (!res.items.length) return showRowMessage('لا يوجد موظفون مطابقون.');
