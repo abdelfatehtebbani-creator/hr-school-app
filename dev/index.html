@@ -282,7 +282,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109060034"};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261109110034"};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1542,10 +1542,10 @@ var AppTransport = (function () {
         var tiles = [tile('موظف نشط', p.activeEmployees, 'employees'),
           peopleTile(oneDay ? 'حاضرون (بصموا للدخول)' : 'أيام حضور', p.present, g.present, oneDay)];
         if (p.notYet !== null) tiles.push(peopleTile('لم يبصموا بعد اليوم', p.notYet, g.notYet, true, p.notYet ? 'warn' : ''));
+        tiles.push(peopleTile(oneDay ? 'خرجوا مبكرًا' : 'حالات خروج مبكر', p.earlyLeave || 0, g.earlyLeave || [], oneDay, p.earlyLeave ? 'warn' : ''));
+        tiles.push(peopleTile(oneDay ? 'متأخرون' : 'حالات تأخير', p.late, g.late, oneDay, p.late ? 'warn' : ''));
         if (p.left !== null && p.left !== undefined) tiles.push(peopleTile('غادروا اليوم', p.left, g.left || [], true));
         tiles.push(
-          peopleTile(oneDay ? 'متأخرون' : 'حالات تأخير', p.late, g.late, oneDay, p.late ? 'warn' : ''),
-          peopleTile(oneDay ? 'خرجوا مبكرًا' : 'حالات خروج مبكر', p.earlyLeave || 0, g.earlyLeave || [], oneDay, p.earlyLeave ? 'warn' : ''),
           peopleTile(oneDay ? 'غائبون' : 'أيام غياب', p.absent, g.absent, oneDay, p.absent ? 'bad' : ''),
           peopleTile(oneDay ? 'في إجازة' : 'أيام إجازة', p.onLeave, g.onLeave, oneDay),
           p.leaveOverdue !== null ? peopleTile('لم يعودوا بعد الإجازة', p.leaveOverdue, g.leaveOverdue, 'leave', p.leaveOverdue ? 'bad' : '') : null,
