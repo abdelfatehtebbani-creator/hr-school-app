@@ -293,7 +293,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261110172701","release":36};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261110173421","release":36};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -3581,7 +3581,22 @@ var AppTransport = (function () {
         natOther.parentNode.hidden = nat.value !== 'OTHER';
         var n = o.nationalities[Number(nat.value)];
         arWrap.hidden = !(n && n.arab);
+        // Non-Arab staff work in English: picking such a nationality switches the app to English (once; the button switches back).
+        if (((n && !n.arab) || nat.value === 'OTHER') && App.lang() === 'ar' && !switched) { switched = true; toggleLanguage(); }
       }
+      var switched = false;
+      var langBtn = el('button', { type: 'button', className: 'btn small onboarding-lang', 'data-i18n': 'off' }, [App.lang() === 'en' ? 'عربي' : 'English']);
+      function toggleLanguage() {
+        var main = document.getElementById('lang');
+        if (!main) return;
+        main.click(); // the app's own switch: saves the choice and translates every screen, this one included
+        var tries = 0;
+        var t = setInterval(function () {
+          langBtn.textContent = App.lang() === 'en' ? 'عربي' : 'English';
+          if (++tries > 20) clearInterval(t);
+        }, 250);
+      }
+      langBtn.addEventListener('click', function () { switched = true; toggleLanguage(); });
       nat.addEventListener('change', natChanged);
 
       var grid = el('div', { className: 'grid' }, [
@@ -3605,7 +3620,7 @@ var AppTransport = (function () {
       out.addEventListener('click', function () { document.getElementById('signout').click(); });
       var box = el('div', { id: 'onboarding', className: 'onboarding', role: 'dialog', 'aria-modal': 'true' }, [
         el('div', { className: 'onboarding-card' }, [
-          el('h2', {}, ['أكمل بياناتك']),
+          el('div', { className: 'toolbar' }, [el('h2', {}, ['أكمل بياناتك']), el('span', { className: 'spacer' }), langBtn]),
           el('p', { className: 'muted' }, ['قبل استعمال التطبيق، أدخل بياناتك الأساسية الصحيحة. تراجعها الموارد البشرية بعد الإرسال.']),
           grid, docsBox.childNodes.length ? el('h3', {}, ['الوثائق']) : null, docsBox, error,
           el('div', { className: 'form-actions' }, [out, send]),
