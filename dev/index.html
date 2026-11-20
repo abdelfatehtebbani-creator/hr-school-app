@@ -167,6 +167,9 @@
 
   /* --- tables ------------------------------------------------------------------ */
   .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+  /* Long tables (employees): scroll inside a box as tall as the screen; sideways scrollbar always visible, header stays on top. */
+  .table-wrap.scroll-box { overflow: auto; max-height: calc(100vh - 170px); max-height: calc(100dvh - 170px); }
+  .table-wrap.scroll-box thead th { position: sticky; top: 0; z-index: 2; box-shadow: inset 0 -1px 0 var(--line); }
   table { width: 100%; border-collapse: collapse; background: var(--card); }
   th, td { text-align: start; padding: 12px 14px; border-bottom: 1px solid #efebe3; vertical-align: middle; }
   th { font-size: 13px; color: #4a5561; font-weight: 600; background: #f3f0e9; white-space: nowrap; }
@@ -319,7 +322,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261119132421","release":44};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261120065318","release":45};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1763,7 +1766,8 @@ var AppTransport = (function () {
       ] : [])));
 
       view.body = el('tbody');
-      root.appendChild(el('div', { className: 'table-wrap' }, [el('table', {}, [
+      // The table scrolls inside its own box, so its sideways scrollbar stays at the bottom of the screen and the header on top.
+      root.appendChild(el('div', { className: 'table-wrap scroll-box' }, [el('table', {}, [
         el('thead', {}, [el('tr', {}, [F.employeeCode, F.fullName, F.googleEmail, F.departmentId, F.academicLevelId, F.status, 'الوثائق', ''].map(function (h) {
           return el('th', {}, [h]);
         }))]),
