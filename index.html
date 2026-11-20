@@ -322,7 +322,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261120100050","release":47};
+var APP_CONFIG = {"env":"prod","apiUrl":"https://script.google.com/macros/s/AKfycbx6Duf-y3kVmEWzI4dX4Rs_qtfhfhRUMKu72L32capY5ps1Z-O_WhEhBO_6O2bZ6WN0_Q/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261120163059","release":48};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1285,6 +1285,24 @@ var AppTransport = (function () {
 
     var SELF_TYPES = ['ID', 'PASSPORT', 'DEGREE', 'PHOTO', 'OTHER'];
 
+    /** "View" shows the file under the row and becomes "Close"; pressing it again hides the file. */
+    function viewToggle(button, viewer, documentId) {
+      button.addEventListener('click', function () {
+        if (viewer.__owner === button && !viewer.hidden) {
+          viewer.hidden = true;
+          viewer.textContent = '';
+          button.textContent = 'عرض';
+          return;
+        }
+        App.busy(button, App.api('getEmployeeDocumentFile', documentId)).then(function (f) {
+          if (viewer.__owner && viewer.__owner !== button) viewer.__owner.textContent = 'عرض';
+          viewer.__owner = button;
+          preview(viewer, f);
+          button.textContent = 'إغلاق';
+        }).catch(function (err) { App.toast(App.errorText(err)); });
+      });
+    }
+
     function statusCell(d) {
       if (d.status === 'PENDING') return App.badge('PENDING', 'بانتظار مراجعة HR');
       if (d.status === 'REJECTED') {
@@ -1347,10 +1365,7 @@ var AppTransport = (function () {
 
         var rows = res.documents.map(function (d) {
           var openBtn = el('button', { type: 'button', className: 'btn small' }, ['عرض']);
-          openBtn.addEventListener('click', function () {
-            App.busy(openBtn, App.api('getEmployeeDocumentFile', d.documentId)).then(function (f) { preview(viewer, f); })
-              .catch(function (err) { App.toast(App.errorText(err)); });
-          });
+          viewToggle(openBtn, viewer, d.documentId);
           return el('tr', { className: d.status === 'REPLACED' ? 'muted' : '' }, [
             el('td', {}, [L.documentTypes[d.docType] || d.docType]),
             el('td', { 'data-i18n': 'off' }, [d.documentNumber || '—']),
@@ -1443,10 +1458,7 @@ var AppTransport = (function () {
         var rows = res[0].map(function (d) {
           var openBtn = el('button', { type: 'button', className: 'btn small' }, ['عرض']);
           var viewer = el('div', { className: 'file-preview', hidden: true });
-          openBtn.addEventListener('click', function () {
-            App.busy(openBtn, App.api('getEmployeeDocumentFile', d.documentId)).then(function (f) { preview(viewer, f); })
-              .catch(function (err) { App.toast(App.errorText(err)); });
-          });
+          viewToggle(openBtn, viewer, d.documentId);
           var detail = [L.documentTypes[d.docType] || d.docType, d.documentNumber, d.expiryDate ? 'تنتهي ' + d.expiryDate : '', d.note]
             .filter(Boolean).join(' · ');
           return el('tr', {}, [
