@@ -3,7 +3,7 @@
  * Only this site's own files are cached; server calls and data are never cached.
  * scripts/build-app.js replaces the version placeholder so each build replaces the previous cache.
  */
-var CACHE = 'hr-shell-dev-20261122042324';
+var CACHE = 'hr-shell-dev-20261122050659';
 var SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', function (event) {
