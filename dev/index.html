@@ -103,6 +103,7 @@
   details.fold[open] > summary::before { transform: rotate(-90deg); }
   [dir=rtl] details.fold[open] > summary::before { transform: rotate(90deg); }
   details.fold[open] > summary { margin-bottom: 14px; }
+  details.fold > summary .nav-count { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--gold); color: #2a0a10; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
   .fold-body > h2:first-child, .fold-body > .toolbar:first-child > h2 { display: none; }
   /* A page section folded by App.fold: the section's own card sits inside without a second frame. */
   .fold-body > .card { border: 0; box-shadow: none; padding: 0; margin: 0; background: none; }
@@ -324,7 +325,7 @@
     </div>
 
     <script>
-var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261122051740","release":50};
+var APP_CONFIG = {"env":"dev","apiUrl":"https://script.google.com/macros/s/AKfycbzbnc34pjY_J3Kr6Wn2jnO3Gag0gGOPUJhWXTkMHSgBlR1BK9pYY_hA58RbkW-T8FlxMA/exec","googleClientId":"160377683096-7am1583jjvpcclt4rrpntdv4i9c6fasb.apps.googleusercontent.com","firebase":{"apiKey":"AIzaSyB6a9e1J-gL4okO3IbggULdUUDZG42hjTk","authDomain":"hr-school-app-48371.firebaseapp.com","projectId":"hr-school-app-48371","storageBucket":"hr-school-app-48371.firebasestorage.app","messagingSenderId":"196367305227","appId":"1:196367305227:web:6b59021e8a12fadcc9550e","vapidKey":"BMv3a84mAW33hFEYpZH8LOXNUlpLx9EmBJRsRl_g6vwoG8vVNjHQ82QYbEE9yP5JJ0EZLYGqWDTO378f8jLEmNA"},"version":"20261122052522","release":50};
 /**
  * Installable app layer (docs/24_PWA.md). Loaded only in the static build, before the shared client code.
  * APP_CONFIG {env, apiUrl, googleClientId, version} is written by scripts/build-app.js.
@@ -1657,6 +1658,19 @@ var AppTransport = (function () {
       }
       toolbar.appendChild(el('span', { className: 'spacer' }));
       toolbar.appendChild(el('button', { type: 'button', className: 'btn small', onclick: function () { render(root, user, true); } }, ['تحديث']));
+      // At the top and folding (user request 2026-11-22): what waits for HR, and the alerts. Filled when the data arrives.
+      var pendingBody = el('div', { className: 'card' }, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
+      var alertsBody = el('div', { className: 'card' }, [el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
+      var pendingFold = App.fold('dashboard.pending', 'بانتظار إجراء HR', function () { return pendingBody; });
+      var alertsFold = App.fold('dashboard.alerts', 'تنبيهات', function () { return alertsBody; });
+      root.appendChild(pendingFold);
+      root.appendChild(alertsFold);
+      var foldCount = function (fold, title, n) {
+        var summary = fold.querySelector('summary');
+        summary.textContent = '';
+        summary.appendChild(el('span', {}, [title]));
+        if (n) summary.appendChild(el('span', { className: 'nav-count', 'data-i18n': 'off' }, [String(n)]));
+      };
       var card = el('div', { className: 'card' }, [toolbar, el('p', { className: 'muted' }, ['جارٍ التحميل…'])]);
       root.appendChild(card);
 
@@ -1690,8 +1704,9 @@ var AppTransport = (function () {
         }
 
         var q = d.pending;
-        root.appendChild(el('div', { className: 'card' }, [
-          el('h2', {}, ['بانتظار إجراء HR']),
+        pendingBody.textContent = '';
+        foldCount(pendingFold, 'بانتظار إجراء HR', q.leaves + q.exceptions + q.corrections);
+        pendingBody.appendChild(el('div', {}, [
           el('div', { className: 'tiles' }, [
             tile('إجازات', q.leaves, 'leaves', q.leaves ? 'warn' : ''),
             tile('ساعات استثناء', q.exceptions, 'exceptions', q.exceptions ? 'warn' : ''),
@@ -1702,7 +1717,9 @@ var AppTransport = (function () {
           ]),
         ]));
 
-        var alerts = el('div', { className: 'card' }, [el('h2', {}, ['تنبيهات'])]);
+        var alerts = el('div', {});
+        alertsBody.textContent = '';
+        foldCount(alertsFold, 'تنبيهات', d.alerts.length);
         if (!d.alerts.length) alerts.appendChild(el('p', { className: 'muted' }, ['لا توجد تنبيهات.']));
         else {
           alerts.appendChild(el('ul', { className: 'alerts' }, d.alerts.map(function (a) {
@@ -1712,7 +1729,7 @@ var AppTransport = (function () {
             return el('li', { className: a.severity }, [text].concat(more));
           })));
         }
-        root.appendChild(alerts);
+        alertsBody.appendChild(alerts);
       }).catch(function (err) { card.lastChild.textContent = App.errorText(err); });
     }
 
